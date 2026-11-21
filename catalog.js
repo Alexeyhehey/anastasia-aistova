@@ -56,5 +56,20 @@ window.AISTOVA_SERIES = [
         944
       ]
     ]
+  },
+  {
+    "id": "test-489a2413",
+    "title": "TEST",
+    "titleRu": "ТЕСТ",
+    "lat": 39.536,
+    "lon": -104.366,
+    "cover": 1,
+    "selected": [],
+    "sizes": [
+      [
+        924,
+        2000
+      ]
+    ]
   }
 ];
