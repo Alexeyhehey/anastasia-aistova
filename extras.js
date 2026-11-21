@@ -77,7 +77,73 @@
         </a>`);
     });
 
+    const key = document.getElementById('mapKey');
+    const markers = [...stage.querySelectorAll('.map-home, .map-point')].map(point => {
+      const dot = point.querySelector('i');
+      const label = point.querySelector('.map-label, em');
+      let link;
+      if (point.matches('a')) {
+        link = document.createElement('a');
+        link.href = point.hash;
+        link.textContent = label.querySelector('b').textContent;
+        point.setAttribute('aria-label', 'Открыть серию ' + link.textContent);
+        key.append(link);
+      }
+      return { dot, label, link };
+    });
+    const waters = [...stage.querySelectorAll('.map-water')];
+    function overlaps(a, b) {
+      const gap = 6;
+      return a.left < b.right + gap && a.right > b.left - gap &&
+        a.top < b.bottom + gap && a.bottom > b.top - gap;
+    }
+
+    function arrangeLabels() {
+      const bounds = stage.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return;
+      for (const { label } of markers) label.style.translate = '';
+      const boxes = markers.map(({ dot, label }) => ({
+        dot: dot.getBoundingClientRect(), label: label.getBoundingClientRect()
+      }));
+      const occupied = boxes.map(box => box.dot);
+      const fixed = stage.querySelectorAll('.map-tick, .map-compass');
+      for (const node of fixed) if (node.offsetWidth) occupied.push(node.getBoundingClientRect());
+
+      let needsKey = false;
+      markers.forEach(({ label, link }, index) => {
+        const { dot, label: base } = boxes[index];
+        if (!base.width) return;
+        const x = (dot.left + dot.right) / 2, y = (dot.top + dot.bottom) / 2;
+        const w = base.width, h = base.height;
+        // Keep the original composition when it fits. Try both sides and the diagonals before the key.
+        const candidates = [[base.left, base.top],
+          [x + 16, y - h / 2], [x - 16 - w, y - h / 2],
+          [x - w / 2, y + 16], [x - w / 2, y - 16 - h],
+          [x + 12, y + 12], [x - w - 12, y + 12],
+          [x + 12, y - h - 12], [x - w - 12, y - h - 12]];
+        const chosen = candidates.map(([left, top]) => ({ left, top, right: left + w, bottom: top + h }))
+          .find(box => box.left >= bounds.left + 6 && box.top >= bounds.top + 6 &&
+            box.right <= bounds.right - 6 && box.bottom <= bounds.bottom - 6 &&
+            !occupied.some(other => overlaps(box, other)));
+        label.classList.toggle('is-unplaced', !chosen);
+        if (link) {
+          link.hidden = !!chosen;
+          if (!chosen) needsKey = true;
+        }
+        if (chosen) {
+          occupied.push(chosen);
+          label.style.translate = (chosen.left - base.left) + 'px ' + (chosen.top - base.top) + 'px';
+        }
+      });
+      key.hidden = !needsKey;
+      for (const water of waters) {
+        const box = water.getBoundingClientRect();
+        water.classList.toggle('is-obscured', occupied.some(other => overlaps(box, other)));
+      }
+    }
+
     function draw() {
+      arrangeLabels();
       const w = stage.clientWidth;
       const h = stage.clientHeight;
       if (!w || !h) return;
@@ -96,6 +162,7 @@
       svg.innerHTML = `<g class="map-grid">${grid}</g>${arcs}`;
     }
     draw();
+    document.fonts?.ready.then(arrangeLabels);
     if ('ResizeObserver' in window) new ResizeObserver(draw).observe(stage);
     else window.addEventListener('resize', draw, { passive: true });
   }

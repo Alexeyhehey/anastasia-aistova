@@ -196,13 +196,14 @@
   /* ---------------- Шапка и параллакс первого экрана ---------------- */
 
   function initHeaderAndParallax() {
+    const parallaxLayout = matchMedia('(min-width: 1101px), (min-width: 801px) and (orientation: landscape)');
     const header = $('#siteHeader');
     const stage = $('#heroStage');
     let scheduled = false;
     function update() {
       scheduled = false;
       header.classList.toggle('is-scrolled', scrollY > 24);
-      if (!reducedMotion && innerWidth > 800 && !document.body.classList.contains('is-series') && scrollY < innerHeight * 1.2) {
+      if (!reducedMotion && parallaxLayout.matches && !document.body.classList.contains('is-series') && scrollY < innerHeight * 1.2) {
         stage.style.transform = `translate3d(0, ${scrollY * .07}px, 0)`;
       } else {
         stage.style.transform = '';
@@ -247,11 +248,12 @@
 
   // Сохраняем точку входа в записи главной до того, как сменится hash.
   home.addEventListener('click', (event) => {
-    const link = event.target.closest('.series-card, .map-point');
+    const link = event.target.closest('.series-card, .map-point, .map-key a');
     if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     history.replaceState({ ...history.state, portfolioReturn: {
       hash: link.hash,
       fromCard: link.classList.contains('series-card'),
+      fromKey: !!link.closest('.map-key'),
       top: link.getBoundingClientRect().top,
       rowLeft: $('#seriesRow').scrollLeft,
       width: innerWidth,
@@ -281,7 +283,7 @@
       document.body.classList.remove('is-series');
       document.title = `${C.site.name} — фотограф`;
       const saved = previousId && history.state?.portfolioReturn;
-      const returnLink = saved && $$(saved.fromCard ? '.series-card' : '.map-point', home)
+      const returnLink = saved && $$(saved.fromCard ? '.series-card' : saved.fromKey && !$('#mapKey').hidden ? '.map-key a' : '.map-point', home)
         .find(link => link.hash === saved.hash);
       if (returnLink && !pendingReturn) {
         if (innerWidth === saved.width) {

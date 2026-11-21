@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 test('publish photographs, edit their selection, hide and restore a shoot', async ({ page }) => {
   const prefix = 'window.AISTOVA_SERIES = ';
   let catalog = readFileSync('catalog.js', 'utf8'), head = '0'.repeat(40), tree, staged, sequence = 0;
+  const initialCount = JSON.parse(catalog.trim().slice(prefix.length, -1)).length;
   const blobs = new Map();
   const sha = () => (++sequence).toString(16).padStart(40,'0');
   await page.route('https://api.github.com/repos/Alexeyhehey/anastasia-aistova/**', async route => {
@@ -38,14 +39,14 @@ test('publish photographs, edit their selection, hide and restore a shoot', asyn
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('./add-series.html');
   await page.locator('summary').click(); await page.locator('#token').fill('test-only'); await page.locator('#auth button').click();
-  await expect(page.locator('.entry')).toHaveCount(3);
+  await expect(page.locator('.entry')).toHaveCount(initialCount);
   await page.locator('#create').click(); await page.locator('#title').fill('Tokyo');
   await page.locator('#mapPicker').click({position:{x:160,y:50}});
   await expect(page.locator('#lat')).not.toHaveValue('');
   await page.locator('#photos').setInputFiles(['01','02'].map(n => resolve('img/selected', n + '.jpg')));
   await page.locator('#list input[type=radio]').nth(1).check();
   await page.locator('#list input[type=checkbox]').nth(0).check();
-  await page.locator('#save').click(); await expect(page.locator('.entry')).toHaveCount(4);
+  await page.locator('#save').click(); await expect(page.locator('.entry')).toHaveCount(initialCount + 1);
   const shoot = JSON.parse(catalog.trim().slice(prefix.length,-1)).at(-1);
   expect(shoot.selected).toEqual([1]); expect(shoot.cover).toBe(2); expect(shoot.sizes).toHaveLength(2);
   const managerURL = page.url();

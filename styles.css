@@ -274,6 +274,10 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 .map-point.is-card-up .map-card { top: auto; bottom: calc(50% + 48px); }
 .map-point.is-card-left .map-card, .map-point.is-card-far .map-card { left: auto; right: calc(50% + 18px); }
 .map-point.is-card-far .map-card { top: calc(50% - 20px); }
+.map-key { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 20px; min-width: 0; }
+.map-key a { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 4px; }
+.map-label, .map-home em, .map-point, .map-home { transition-property: none; }
+.map-label.is-unplaced, .map-home em.is-unplaced, .map-water.is-obscured { visibility: hidden; }
 .map-note { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
 .map-water { position: absolute; transform: translate(-50%, -50%); color: var(--ink); opacity: .2; font-family: var(--font-accent); font-style: italic; font-size: clamp(13px, 1.5vw, 22px); letter-spacing: .28em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
 @media (hover: none) { .map-card { display: none; } }
@@ -492,6 +496,17 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 }
 
 /* ——— Телефон (основная версия!) ——— */
+@media (min-width: 801px) and (max-width: 1100px) and (orientation: portrait) {
+  .hero { display: block; min-height: auto; }
+  .hero-stage-wrap { height: auto; padding-top: calc(var(--header-h) + env(safe-area-inset-top, 0px)); }
+  .hero-stage { width: min(100%, 60svh); }
+  .hero-scroll { display: none; }
+  .hero-content { max-width: 760px; margin-inline: auto; padding: 38px var(--gutter) 64px; }
+  .hero-content .eyebrow { margin-bottom: 16px; }
+  .hero-statement { max-width: 22ch; }
+  .hero-intro, .hero-actions { margin-top: 20px; }
+}
+
 @media (max-width: 800px) {
   :root { --header-h: 62px; }
   .page-grid { grid-template-columns: 1fr; gap: 0; }
