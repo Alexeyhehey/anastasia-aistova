@@ -71,5 +71,22 @@ window.AISTOVA_SERIES = [
       ]
     ],
     "published": false
+  },
+  {
+    "id": "amsterdam-fc9c0e78",
+    "title": "Amsterdam",
+    "titleRu": "Амстердам",
+    "lat": 51.368,
+    "lon": 4.056,
+    "cover": 1,
+    "selected": [
+      1
+    ],
+    "sizes": [
+      [
+        2000,
+        1500
+      ]
+    ]
   }
 ];
