@@ -209,7 +209,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 .hero-cutout { z-index: 3; pointer-events: none; }
 .hero-name { position: absolute; z-index: 2; left: 4.5%; right: 4.5%; top: 1.1%; color: #f6f5f1; text-shadow: 0 2px 26px rgb(0 0 0 / .5), 0 1px 6px rgb(0 0 0 / .35); }
 .hero-name-line { display: block; font-size: 11.9cqw; line-height: .96; letter-spacing: -.015em; }
-.hero-name-line--em { font-size: 6.6cqw; margin-top: .06em; text-align: right; font-style: italic; }
+.hero-name-line--em { font-size: 5.9cqw; margin-top: -.08em; margin-right: -1.5%; text-align: right; font-style: italic; }
 .hero-content { min-width: 0; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-h) + 48px) var(--gutter) 64px clamp(32px, 4vw, 76px); }
 .hero-scroll { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); display: inline-flex; flex-direction: column; align-items: center; gap: 10px; color: var(--muted); font-size: 9.5px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; }
 .hero-scroll::after { content: ""; width: 1px; height: 34px; background: currentColor; transform-origin: top; animation: hero-scroll-hint 2.2s var(--ease-out) infinite; }

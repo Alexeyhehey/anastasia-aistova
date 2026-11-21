@@ -12,9 +12,8 @@
     root.dataset.theme = current;
     meta.content = white ? '#ffffff' : '#000000';
     if (control) {
-      const label = white ? 'Чёрная тема' : 'Белая тема';
-      control.querySelector('span').textContent = label;
       control.title = white ? 'Включить чёрную тему' : 'Включить белую тему';
+      control.querySelector('span').textContent = control.title;
       control.setAttribute('aria-label', control.title);
     }
   }
