@@ -71,6 +71,7 @@ window.AISTOVA_SERIES = [
         924,
         2000
       ]
-    ]
+    ],
+    "published": false
   }
 ];
