@@ -98,3 +98,7 @@ window.CONTENT = {
 window.escapePortfolioText = value => String(value).replace(/[&<>"]/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
 })[char]);
+
+// Existing series use the original photo library. New beta uploads belong to the beta folder.
+window.seriesPhoto = (series, number) =>
+  (series.betaMedia ? 'img/' : '../img/') + series.id + '/' + String(number).padStart(2, '0') + '.jpg';

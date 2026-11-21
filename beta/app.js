@@ -16,7 +16,7 @@
 
   const SERIES = window.AISTOVA_SERIES.filter(s => s.published !== false).map((cfg) => {
     const frames = (cfg.sizes || window.DIMS[cfg.id]).map(([w, h], index) => ({
-      src: `../img/${cfg.id}/${pad(index + 1)}.jpg`, w, h, index
+      src: window.seriesPhoto(cfg, index + 1), w, h, index
     }));
     const cover = frames[(cfg.cover || 1) - 1] || frames[0];
     const ordered = [cover, ...frames.filter(frame => frame !== cover)];

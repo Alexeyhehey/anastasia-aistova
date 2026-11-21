@@ -81,7 +81,7 @@
         <a class="map-point ${px(place.lon) > .62 && !LAYOUT[place.id] ? 'is-up is-card-left' : ''} ${place.label} ${place.card}" href="#/${place.id}" data-lat="${place.lat}" data-lon="${place.lon}">
           <i class="map-dot"></i>
           <span class="map-label"><b>${window.escapePortfolioText(place.title)}</b><small>${coords(place)}</small></span>
-          <span class="map-card"><img src="../img/${place.id}/${String(place.cover || 1).padStart(2, '0')}.jpg" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
+          <span class="map-card"><img src="${window.seriesPhoto(place, place.cover || 1)}" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
         </a>`);
     });
 
@@ -152,7 +152,7 @@
 
     const features = [...stage.querySelectorAll('[data-lat], [data-lon]')];
     const scales = [...document.querySelectorAll('.map-scale button')];
-    let world = false;
+    let world = true;
     for (const button of scales) {
       button.addEventListener('click', () => {
         world = button.dataset.scale === 'world';
@@ -166,7 +166,7 @@
       const w = stage.clientWidth;
       const h = stage.clientHeight;
       if (!w || !h) return;
-      const limits = world ? { west: -180, east: 180, north: 90, south: -90 } : region;
+      const limits = world ? { west: -200, east: 200, north: 100, south: -100 } : region;
       // Equirectangular coordinates. The regional view uses a standard parallel of 38 degrees.
       const spanX = limits.east - limits.west, spanY = limits.north - limits.south;
       const ratio = w / h / (world ? 1 : Math.cos(38 * Math.PI / 180));

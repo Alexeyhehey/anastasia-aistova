@@ -22,17 +22,17 @@
   <meta name="color-scheme" content="dark light">
   <meta name="darkreader-lock">
   <script src="palette.js?v=4"></script>
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
   <noscript><style>
     #mainNav, #themeToggle, .hero-actions a[href="#works"], #works, .selected,
     #about, #formats { display: none; }
   </style></noscript>
   <script defer src="catalog.js?v=5"></script>
-  <script defer src="content.js?v=3"></script>
+  <script defer src="content.js?v=6"></script>
   <script defer src="../img/dims.js"></script>
-  <script defer src="intro.js?v=3"></script>
-  <script defer src="app.js?v=5"></script>
-  <script defer src="extras.js?v=5"></script>
+  <script defer src="intro.js?v=6"></script>
+  <script defer src="app.js?v=6"></script>
+  <script defer src="extras.js?v=6"></script>
 </head>
 <body>
   <div class="intro" id="intro" aria-hidden="true" hidden>
@@ -64,6 +64,7 @@
   </div>
 
   <header class="site-header" id="siteHeader">
+    <div class="dev-banner"><strong>[IN DEVELOPMENT]</strong><a href="add-series.html">Бета-студия ↗</a></div>
     <a class="brand" href="#top" aria-label="AA · Анастасия Аистова — к началу страницы">
       <span class="brand-mark">AA</span>
       <span class="brand-name">Анастасия Аистова</span>
@@ -110,10 +111,10 @@
       </div>
       <div class="map page-grid" id="geography" data-reveal>
         <div class="map-scale" role="group" aria-label="Масштаб карты">
-          <button type="button" data-scale="series" aria-pressed="true" aria-controls="mapStage">Места серий</button>
-          <button type="button" data-scale="world" aria-pressed="false" aria-controls="mapStage">Весь мир</button>
+          <button type="button" data-scale="series" aria-pressed="false" aria-controls="mapStage">Места серий</button>
+          <button type="button" data-scale="world" aria-pressed="true" aria-controls="mapStage">Весь мир</button>
         </div>
-        <div class="map-stage" id="mapStage" role="group" aria-label="Карта мест, в честь которых названы серии"></div>
+        <div class="map-stage is-world" id="mapStage" role="group" aria-label="Карта мест, в честь которых названы серии"></div>
         <nav class="map-key" id="mapKey" aria-label="Серии на карте" hidden></nav>
         <p class="map-note" data-c="portfolio.mapNote"></p>
       </div>

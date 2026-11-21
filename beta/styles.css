@@ -6,7 +6,8 @@
 
 :root {
   --gutter: clamp(20px, 4.2vw, 68px);
-  --header-h: 76px;
+  --dev-height: 38px;
+  --header-h: calc(76px + var(--dev-height));
   --section-pad: clamp(90px, 11vw, 160px);
   --ease-out: cubic-bezier(.22, 1, .36, 1);
   --ease-film: cubic-bezier(.65, 0, .35, 1);
@@ -98,7 +99,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   transition: background-color 240ms, border-color 240ms, height 240ms;
 }
 .site-header.is-scrolled, body.is-series .site-header {
-  height: 62px;
+  height: calc(62px + var(--dev-height));
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   border-color: var(--line);
   backdrop-filter: blur(16px);
@@ -508,7 +509,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 }
 
 @media (max-width: 800px) {
-  :root { --header-h: 62px; }
+  :root { --header-h: calc(62px + var(--dev-height)); }
   .page-grid { grid-template-columns: 1fr; gap: 0; }
   .site-header { padding-inline: 20px; }
   .brand-name { display: none; }
@@ -667,3 +668,16 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .map-scale { margin-bottom: 8px; }
 }
 .map-stage.is-world { aspect-ratio: 2 / 1; }
+
+.site-header { padding-top: var(--dev-height); }
+.dev-banner {
+  position: absolute; inset: 0 0 auto; height: var(--dev-height); padding-inline: var(--gutter);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--ink); color: var(--bg);
+}
+.dev-banner strong { font: 850 clamp(19px, 2vw, 26px)/1 var(--font-display); }
+.dev-banner a { display: inline-flex; align-items: center; min-height: 100%; font-size: 13px; font-weight: 700; }
+@media (max-width: 800px) {
+  .dev-banner { padding-inline: 12px; }
+  .map-stage.is-world { aspect-ratio: 1.55; }
+}

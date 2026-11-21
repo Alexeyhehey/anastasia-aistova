@@ -17,7 +17,7 @@
         if (series.id !== name.textContent.toLowerCase()) {
           const count = (series.sizes || window.DIMS[series.id]).length;
           panel.querySelectorAll('img').forEach((image, n) => {
-            image.src = '../img/' + series.id + '/' + String(Math.min(n + 1, count)).padStart(2, '0') + '.jpg';
+            image.src = window.seriesPhoto(series, Math.min(n + 1, count));
           });
         }
         name.textContent = series.title;
