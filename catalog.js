@@ -88,5 +88,20 @@ window.AISTOVA_SERIES = [
         1500
       ]
     ]
+  },
+  {
+    "id": "testtesttest-dccebf85",
+    "title": "TESTTESTTEST",
+    "titleRu": "TESTTESTTEST",
+    "lat": 56.092,
+    "lon": 39.127,
+    "cover": 1,
+    "selected": [],
+    "sizes": [
+      [
+        2000,
+        1500
+      ]
+    ]
   }
 ];
