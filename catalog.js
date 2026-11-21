@@ -42,14 +42,12 @@ window.AISTOVA_SERIES = [
   },
   {
     "id": "kyiv-994e21ce",
-    "title": "Kyiv",
-    "titleRu": "Киев",
-    "lat": 51.864,
-    "lon": 35.352,
+    "title": "TEST",
+    "titleRu": "ТЕСТ",
+    "lat": 40.679,
+    "lon": -99.085,
     "cover": 1,
-    "selected": [
-      1
-    ],
+    "selected": [],
     "sizes": [
       [
         959,
