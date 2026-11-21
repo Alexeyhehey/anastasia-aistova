@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="Анастасия Аистова — индивидуальные и творческие съёмки в Санкт-Петербурге и Ленинградской области.">
+  <title>Анастасия Аистова — фотограф</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Анастасия Аистова — фотограф">
+  <meta property="og:description" content="Индивидуальные и творческие съёмки. Санкт-Петербург и Ленинградская область.">
+  <meta property="og:image" content="https://alexeyhehey.github.io/anastasia-aistova/img/og.jpg">
+  <meta property="og:url" content="https://alexeyhehey.github.io/anastasia-aistova/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='serif' font-size='36' fill='%23f5f5f0'%3EAA%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="image" href="img/me/01.jpg" fetchpriority="high">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    /* тема до первой отрисовки, чтобы не было вспышки */
+    try {
+      var savedTheme = localStorage.getItem('aistova-theme');
+      if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+    } catch (e) {}
+    document.documentElement.classList.add('js');
+  </script>
+  <script defer src="content.js"></script>
+  <script defer src="img/dims.js"></script>
+  <script defer src="intro.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="extras.js"></script>
+</head>
+<body>
+  <div class="intro" id="intro" aria-hidden="true" hidden>
+    <div class="intro-topline">
+      <span>Aistova / Photography</span>
+      <span class="intro-count" id="introCount">00</span>
+    </div>
+    <div class="intro-panels">
+      <figure class="intro-panel">
+        <div class="intro-shot"><img class="is-on" src="img/intro/edinburgh-1.jpg" alt=""><img src="img/intro/edinburgh-2.jpg" alt=""><img src="img/intro/edinburgh-3.jpg" alt=""><img src="img/intro/edinburgh-4.jpg" alt=""></div>
+        <figcaption><i>01</i><b>Edinburgh</b></figcaption>
+      </figure>
+      <figure class="intro-panel">
+        <div class="intro-shot"><img class="is-on" src="img/intro/martinique-1.jpg" alt=""><img src="img/intro/martinique-2.jpg" alt=""><img src="img/intro/martinique-3.jpg" alt=""><img src="img/intro/martinique-4.jpg" alt=""></div>
+        <figcaption><i>02</i><b>Martinique</b></figcaption>
+      </figure>
+      <figure class="intro-panel">
+        <div class="intro-shot"><img class="is-on" src="img/intro/ladoga-1.jpg" alt=""><img src="img/intro/ladoga-2.jpg" alt=""><img src="img/intro/ladoga-3.jpg" alt=""><img src="img/intro/ladoga-4.jpg" alt=""></div>
+        <figcaption><i>03</i><b>Ladoga</b></figcaption>
+      </figure>
+    </div>
+    <p class="intro-name" id="introName"><span class="intro-word">ANASTASIA</span><span class="intro-word intro-word--em">AISTOVA</span></p>
+    <div class="intro-flash"></div>
+    <div class="intro-bottomline">
+      <span>Санкт-Петербург</span>
+      <span class="intro-skip">Нажмите, чтобы пропустить</span>
+    </div>
+    <div class="intro-line"><i id="introLine"></i></div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="#top" aria-label="Анастасия Аистова — к началу страницы">
+      <span class="brand-mark">AA</span>
+      <span class="brand-name">Анастасия Аистова</span>
+    </a>
+    <div class="header-right">
+      <nav class="nav" id="mainNav" aria-label="Основная навигация"></nav>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить цветовую тему">
+        <span class="theme-dot theme-dot--black" aria-hidden="true"></span>
+        <span class="theme-dot theme-dot--wine" aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero" id="top" aria-labelledby="heroTitle">
+      <div class="hero-stage-wrap">
+        <div class="hero-stage" id="heroStage">
+          <img class="hero-base" src="img/me/01.jpg" width="1280" height="1280" alt="Анастасия Аистова" fetchpriority="high" id="heroImage">
+          <div class="hero-shade" aria-hidden="true"></div>
+          <h1 class="hero-name" id="heroTitle">
+            <span class="hero-name-line" id="heroNameLine1">ANASTASIA</span>
+            <span class="hero-name-line hero-name-line--em" id="heroNameLine2">AISTOVA</span>
+          </h1>
+          <img class="hero-cutout" src="img/me/01-cutout.webp" width="1280" height="1280" alt="" aria-hidden="true">
+        </div>
+        <span class="hero-scroll" aria-hidden="true">листайте</span>
+      </div>
+      <div class="hero-content">
+        <p class="eyebrow" data-c="site.city"></p>
+        <h2 class="hero-statement" data-c="site.tagline"></h2>
+        <p class="hero-intro" data-c="hero.intro"></p>
+        <div class="hero-actions">
+          <a class="btn" href="#works"><span data-c="hero.ctaWorks"></span><svg viewBox="0 0 32 16" aria-hidden="true"><path d="M0 8h30M23 1l7 7-7 7"/></svg></a>
+          <a class="btn btn--ghost" href="#contact"><span data-c="hero.ctaContact"></span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="works-section" id="works" aria-labelledby="worksTitle">
+      <div class="section-intro page-grid" data-reveal>
+        <p class="section-label" data-c="portfolio.label"></p>
+        <h2 id="worksTitle" data-c="portfolio.subtitle"></h2>
+        <p class="section-lead" data-c="portfolio.lead"></p>
+      </div>
+      <div class="map page-grid" data-reveal>
+        <div class="map-stage" id="mapStage" role="group" aria-label="Карта мест, в честь которых названы серии"></div>
+        <p class="map-note" data-c="portfolio.mapNote"></p>
+      </div>
+      <div class="series-row-wrap" data-reveal>
+        <div class="series-row-head page-grid">
+          <p class="works-hint" data-c="portfolio.hint"></p>
+          <div class="row-controls">
+            <button type="button" id="seriesPrev" aria-label="Предыдущая серия"><svg viewBox="0 0 32 16" aria-hidden="true"><path d="M32 8H2M9 1 2 8l7 7"/></svg></button>
+            <button type="button" id="seriesNext" aria-label="Следующая серия"><svg viewBox="0 0 32 16" aria-hidden="true"><path d="M0 8h30M23 1l7 7-7 7"/></svg></button>
+          </div>
+        </div>
+        <div class="series-row" id="seriesRow" tabindex="0" aria-label="Обложки серий. Прокручивается горизонтально"></div>
+        <div class="row-progress" aria-hidden="true"><i id="seriesProgress"></i></div>
+      </div>
+    </section>
+
+    <section class="selected" aria-labelledby="selectedTitle">
+      <div class="selected-head page-grid" data-reveal>
+        <p class="section-label" data-c="selected.label"></p>
+        <h2 id="selectedTitle" data-c="selected.title"></h2>
+      </div>
+      <div class="selected-grid" id="selectedGrid"></div>
+    </section>
+
+    <section class="about-section" id="about" aria-labelledby="aboutTitle">
+      <div class="about-grid page-grid">
+        <p class="section-label" data-reveal data-c="about.label"></p>
+        <div class="about-heading" data-reveal>
+          <h2 id="aboutTitle" data-c="about.title"></h2>
+          <figure class="about-portrait">
+            <img src="img/me/portrait.jpg" width="640" height="640" alt="Анастасия Аистова — портрет" loading="lazy">
+          </figure>
+        </div>
+        <div class="about-copy" id="aboutCopy" data-reveal></div>
+        <figure class="about-photo about-photo--first" data-reveal>
+          <img src="img/me/02.jpg" width="960" height="1280" alt="Анастасия Аистова фотографирует модель" loading="lazy">
+        </figure>
+        <figure class="about-photo about-photo--second" data-reveal>
+          <img src="img/me/03.jpg" width="960" height="1280" alt="Анастасия Аистова во время съёмки" loading="lazy">
+        </figure>
+      </div>
+    </section>
+
+    <section class="formats-section" id="formats" aria-labelledby="formatsTitle">
+      <div class="page-grid">
+        <div class="formats-heading" data-reveal>
+          <p class="section-label" data-c="services.label"></p>
+          <h2 id="formatsTitle" data-c="services.title"></h2>
+          <p class="section-lead" data-c="services.lead"></p>
+        </div>
+        <div class="format-list" id="formatList"></div>
+        <div class="common-details" id="commonDetails" data-reveal></div>
+      </div>
+    </section>
+
+    <section class="contact-section" id="contact" aria-labelledby="contactTitle">
+      <div class="contact-inner">
+        <h2 id="contactTitle" class="contact-giant" data-reveal data-c="contacts.label"></h2>
+        <p class="contact-invite" data-reveal data-c="contacts.invite"></p>
+        <div class="contact-rows" data-reveal>
+          <a class="contact-row" id="contactTelegram" target="_blank" rel="noopener">
+            <span class="contact-row-label" data-c="site.telegramLabel"></span>
+            <span class="contact-row-arrow" aria-hidden="true">↗︎</span>
+          </a>
+          <a class="contact-row" id="contactInstagram" target="_blank" rel="noopener">
+            <span class="contact-row-label" data-c="site.instagramLabel"></span>
+            <span class="contact-row-arrow" aria-hidden="true">↗︎</span>
+          </a>
+        </div>
+        <p class="contact-geo" data-reveal data-c="site.geoShort"></p>
+      </div>
+    </section>
+  </main>
+
+  <main id="series" class="series-page" hidden></main>
+
+  <footer class="site-footer">
+    <span>© <span id="year">2026</span> <span data-c="site.name"></span></span>
+    <span class="footer-links"><a id="footerTelegram" target="_blank" rel="noopener">Telegram</a><a id="footerInstagram" target="_blank" rel="noopener">Instagram</a></span>
+    <a href="#top">Наверх ↑</a>
+  </footer>
+
+  <div class="lightbox" id="lb" role="dialog" aria-modal="true" aria-label="Просмотр фотографии" hidden>
+    <div class="lightbox-top">
+      <span id="lbSeries">Серия</span>
+      <span class="lightbox-counter" id="lbCounter">01 / 01</span>
+      <button class="lightbox-close" type="button" aria-label="Закрыть просмотр">Закрыть <span aria-hidden="true">×</span></button>
+    </div>
+    <button class="lightbox-nav lightbox-prev" type="button" aria-label="Предыдущий кадр"><svg viewBox="0 0 32 16" aria-hidden="true"><path d="M32 8H2M9 1 2 8l7 7"/></svg></button>
+    <figure class="lightbox-figure">
+      <img id="lbImage" alt="">
+      <figcaption id="lbCaption"></figcaption>
+    </figure>
+    <button class="lightbox-nav lightbox-next" type="button" aria-label="Следующий кадр"><svg viewBox="0 0 32 16" aria-hidden="true"><path d="M0 8h30M23 1l7 7-7 7"/></svg></button>
+    <p class="lightbox-hint">← → листать · Esc закрыть</p>
+  </div>
+
+  <div class="route-curtain" id="routeCurtain" aria-hidden="true"></div>
+  <div class="vf" id="vf" aria-hidden="true"><i></i><i></i><i></i><i></i><span></span></div>
+  <div class="shutter" id="shutter" aria-hidden="true"></div>
+</body>
+</html>
