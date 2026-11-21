@@ -6,6 +6,7 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const arrow = '<svg viewBox="0 0 32 16" aria-hidden="true"><path d="M0 8h30M23 1l7 7-7 7"/></svg>';
+  const escape = window.escapePortfolioText;
   const pad = (value) => String(value).padStart(2, '0');
   const plural = (n) => n % 10 === 1 && n % 100 !== 11 ? 'кадр' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'кадра' : 'кадров';
 
@@ -13,20 +14,25 @@
 
   /* ---------------- Данные ---------------- */
 
-  const SERIES = C.series.map((cfg) => {
+  const SERIES = window.AISTOVA_SERIES.filter(s => s.published !== false).map((cfg) => {
     const frames = (cfg.sizes || window.DIMS[cfg.id]).map(([w, h], index) => ({
       src: `img/${cfg.id}/${pad(index + 1)}.jpg`, w, h, index
     }));
-    return { ...cfg, frames, cover: frames[0], alternate: frames[Math.min(5, frames.length - 1)] };
+    const cover = frames[(cfg.cover || 1) - 1] || frames[0];
+    const ordered = [cover, ...frames.filter(frame => frame !== cover)];
+    return { ...cfg, frames: ordered, sourceFrames: frames, cover, alternate: ordered[Math.min(5, ordered.length - 1)] };
   });
 
   const SELECTED = {
     id: 'selected',
     title: C.selected.label || 'SELECTED',
-    frames: window.DIMS.selected.map(([w, h], index) => ({
-      src: `img/selected/${pad(index + 1)}.jpg`, w, h, index
-    })).concat(SERIES.flatMap(series =>
-      (series.selected || []).map(number => series.frames[number - 1]).filter(Boolean)
+    frames: C.selected.order.flatMap((entry, index) => {
+      if (entry && !SERIES.some(s => s.id === entry[0] && s.selected?.includes(entry[1]))) return [];
+      const [w, h] = window.DIMS.selected[index];
+      return [{ src: `img/selected/${pad(index + 1)}.jpg`, w, h }];
+    }).concat(SERIES.flatMap(series => (series.selected || [])
+      .filter(n => !C.selected.order.some(entry => entry && entry[0] === series.id && entry[1] === n))
+      .map(n => series.sourceFrames[n - 1]).filter(Boolean)
     )).map((frame, index) => ({ ...frame, index }))
   };
 
@@ -76,7 +82,7 @@
           <p class="format-includes">Что включено</p>
           <ul>${format.includes.map((item) => `<li>${item}</li>`).join('')}</ul>
           <p class="price">${format.price || C.services.price}</p>
-          <a class="btn" href="${C.site.telegram}" target="_blank" rel="noopener"><span>${C.services.cta}</span>${arrow}</a>
+          <a class="btn" href="#contact"><span>${C.services.cta}</span>${arrow}</a>
         </div>
       </article>`).join('');
 
@@ -85,27 +91,6 @@
   }
 
   /* ---------------- Тема ---------------- */
-
-  function syncThemeMeta() {
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = document.documentElement.dataset.theme === 'white' ? '#ffffff' : '#000000';
-  }
-
-  function initTheme() {
-    let saved = null;
-    try { saved = localStorage.getItem('aistova-theme'); } catch {}
-    if (!saved) document.documentElement.dataset.theme = C.defaultTheme || 'black';
-    syncThemeMeta();
-    const toggle = $('#themeToggle');
-    toggle.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'white'));
-    toggle.addEventListener('click', () => {
-      const next = document.documentElement.dataset.theme === 'black' ? 'white' : 'black';
-      document.documentElement.dataset.theme = next;
-      toggle.setAttribute('aria-pressed', String(next === 'white'));
-      try { localStorage.setItem('aistova-theme', next); } catch {}
-      syncThemeMeta();
-    });
-  }
 
   /* ---------------- Обложки серий (горизонтальный ряд) ---------------- */
 
@@ -116,7 +101,7 @@
           <img class="cover-main" src="${series.cover.src}" width="${series.cover.w}" height="${series.cover.h}" alt="" loading="lazy">
           <img class="cover-alt" src="${series.alternate.src}" width="${series.alternate.w}" height="${series.alternate.h}" alt="" loading="lazy" aria-hidden="true">
         </div>
-        <span class="series-card-title">${series.title}</span>
+        <span class="series-card-title">${escape(series.title)}</span>
         <span class="series-card-meta"><span>Авторская серия</span><span>${series.frames.length} ${plural(series.frames.length)}</span></span>
       </a>
     `).join('');
@@ -155,16 +140,20 @@
 
   /* ---------------- Подборка ---------------- */
 
-  function renderSelected() {
+  function spreadClasses(frames) {
     // Пары портретов чередуются с одиночными разворотами. Порядок совпадает с лайтбоксом.
     let paired = false;
-    const layouts = SELECTED.frames.map((frame, index, frames) => {
+    return frames.map((frame, index, frames) => {
       if (paired) { paired = false; return ''; }
       const next = frames[index + 1];
       if (frame.w > frame.h || !next || next.w > next.h || index % 7 === 5) return 'is-solo';
       paired = true;
       return 'is-offset';
     });
+  }
+
+  function renderSelected() {
+    const layouts = spreadClasses(SELECTED.frames);
     $('#selectedGrid').innerHTML = SELECTED.frames.map((frame) => `
       <button type="button" class="selected-item ${layouts[frame.index]} ${frame.w > frame.h ? 'selected-item--wide' : ''}" data-s="${frame.index}" data-reveal aria-label="Открыть кадр ${frame.index + 1} из ${SELECTED.frames.length}">
         <img src="${frame.src}" width="${frame.w}" height="${frame.h}" alt="Подборка работ, кадр ${frame.index + 1}" loading="lazy">
@@ -232,26 +221,26 @@
   /* ---------------- Страница серии ---------------- */
 
   function renderSeries(series) {
+    const layouts = ['is-solo frame--opener', ...spreadClasses(series.frames.slice(1))];
     const next = SERIES[(SERIES.indexOf(series) + 1) % SERIES.length];
     seriesPage.innerHTML = `
       <section class="series-hero">
         <a class="series-back" href="#works">← Все серии</a>
         <p class="series-route-label">Авторская фотосерия</p>
-        <h1>${series.title}</h1>
+        <h1>${escape(series.title)}</h1>
         <p class="series-route-note">Название — ассоциация, а не место съёмки.</p>
         <span class="series-route-count">${series.frames.length} ${plural(series.frames.length)}</span>
       </section>
       <div class="frames">${series.frames.map((frame, index) => `
-        <button type="button" class="frame ${frame.w > frame.h ? 'frame--wide' : ''}" data-k="${index}" data-reveal aria-label="Открыть кадр ${index + 1} из ${series.frames.length}">
-          <img src="${frame.src}" width="${frame.w}" height="${frame.h}" alt="Серия «${series.titleRu}», кадр ${index + 1}" loading="lazy">
+        <button type="button" class="frame ${layouts[index]} ${frame.w > frame.h ? 'frame--wide' : ''}" data-k="${index}" data-reveal aria-label="Открыть кадр ${index + 1} из ${series.frames.length}">
+          <img src="${frame.src}" width="${frame.w}" height="${frame.h}" alt="Серия «${escape(series.titleRu)}», кадр ${index + 1}" loading="lazy">
         </button>`).join('')}
       </div>
       <div class="series-next">
-        <a class="btn" href="${C.site.telegram}" target="_blank" rel="noopener"><span>Обсудить съёмку</span>${arrow}</a>
-        <a class="next-series" href="#/${next.id}"><small>Следующая серия</small><span>${next.title} ↗︎</span></a>
+        <a class="btn" href="#contact"><span>Обсудить съёмку</span>${arrow}</a>
+        <a ${SERIES.length === 1 ? "hidden" : ""} class="next-series" href="#/${next.id}"><small>Следующая серия</small><span>${escape(next.title)} ↗︎</span></a>
       </div>
     `;
-    observeReveals(seriesPage);
   }
 
   /* ---------------- Маршрутизация ---------------- */
@@ -283,6 +272,7 @@
       document.body.classList.add('is-series');
       document.title = `${series.titleRu} — ${C.site.name}`;
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      observeReveals(seriesPage);
     } else {
       if (id) history.replaceState(null, '', location.pathname + location.search);
       activeSeriesId = null;
@@ -338,32 +328,26 @@
   function flyToSeries(card, series) {
     if (reducedMotion) { location.hash = `#/${series.id}`; return; }
     const img = card.querySelector('.cover-main');
-    const rect = img.getBoundingClientRect();
-    const clone = document.createElement('img');
+    const from = img.getBoundingClientRect();
+    const clone = img.cloneNode();
     clone.className = 'zoom-clone';
-    clone.src = img.currentSrc || img.src;
     clone.alt = '';
     Object.assign(clone.style, {
-      top: `${rect.top}px`, left: `${rect.left}px`,
-      width: `${rect.width}px`, height: `${rect.height}px`
+      top: from.top + 'px', left: from.left + 'px', width: from.width + 'px', height: from.height + 'px'
     });
     document.body.append(clone);
-    document.body.classList.add('is-locked');
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      Object.assign(clone.style, { top: '0px', left: '0px', width: '100vw', height: '100dvh' });
-    }));
-    let ended = false;
-    const onEnd = () => {
-      if (ended) return;
-      ended = true;
-      location.hash = `#/${series.id}`;
-      requestAnimationFrame(() => {
-        clone.style.opacity = '0';
-        setTimeout(() => { clone.remove(); document.body.classList.remove('is-locked'); }, 430);
-      });
-    };
-    clone.addEventListener('transitionend', onEnd, { once: true });
-    setTimeout(onEnd, 850);   // страховка, если transitionend не придёт
+    window.addEventListener('hashchange', () => {
+      const first = $('.frame img', seriesPage);
+      if (!first || activeSeriesId !== series.id) { clone.remove(); return; }
+      const to = first.getBoundingClientRect();
+      const animation = clone.animate([
+        { left: from.left + 'px', top: from.top + 'px', width: from.width + 'px', height: from.height + 'px' },
+        { left: to.left + 'px', top: to.top + 'px', width: to.width + 'px', height: to.height + 'px' }
+      ], { duration: 650, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' });
+      first.parentElement.classList.add('is-visible');
+      animation.finished.finally(() => clone.remove());
+    }, { once: true });
+    location.hash = '#/' + series.id;
   }
 
   function flyBack(series) {
@@ -526,7 +510,11 @@
   /* ---------------- Сборка ---------------- */
 
   hydrateContent();
-  initTheme();
+  if (!SERIES.length) {
+    $('.series-row-wrap').hidden = true;
+    $('.map').hidden = true;
+    $('.works-section .section-lead').textContent = 'Ниже — подборка отдельных работ.';
+  }
   renderSeriesRow();
   initRowControls();
   renderSelected();

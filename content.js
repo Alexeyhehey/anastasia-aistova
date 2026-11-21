@@ -1,10 +1,3 @@
-/* ============================================================
-   Здесь можно менять тексты, названия серий, ссылки и тему сайта.
-   Для новой съёмки открой add-series.html на сайте. Помощник подготовит папку и запись для списка series.
-   После публикации изменений в ветке main обновится GitHub Pages.
-   При смене контактов обнови также резервные ссылки в index.html.
-   ============================================================ */
-
 window.CONTENT = {
 
   /* ——— Основное ——— */
@@ -13,7 +6,7 @@ window.CONTENT = {
     nameLatin: ['ANASTASIA', 'AISTOVA'], // имя на первом экране (2 строки)
     tagline: 'Индивидуальные и творческие съёмки',
     city: 'Санкт-Петербург и Ленинградская область',
-    geoShort: 'Санкт-Петербург и Ленинградская область. О съёмке в Кирове спросите при записи.',
+    geoShort: 'Санкт-Петербург · Ленинградская область · Киров',
     telegram: 'https://t.me/anaaistv',
     telegramLabel: 'TELEGRAM',
     instagram: 'https://instagram.com/rauyewdona',
@@ -36,19 +29,12 @@ window.CONTENT = {
     hint: 'Выберите место — откройте серию.',
   },
 
-  /* ——— Серии. Название (title) меняется здесь.
-        Обложка — файл 01.jpg в папке img с идентификатором серии. ——— */
-  series: [
-    { id: 'edinburgh',  title: 'Edinburgh',  titleRu: 'Эдинбург',  lat: 55.953, lon: -3.188 },
-    { id: 'martinique', title: 'Martinique', titleRu: 'Мартиника', lat: 14.641, lon: -61.024 },
-    { id: 'ladoga',     title: 'Ladoga',     titleRu: 'Ладога',    lat: 60.84,  lon: 31.47 },
-  ],
-
   /* ——— Подборка отдельных кадров (15 новых фото).
         Кадры идут по номерам файлов в img/selected.
         Размеры этих кадров хранятся в img/dims.js. Затем идут кадры, отмеченные в selected у серий. ——— */
   selected: {
     label: 'SELECTED',
+    order: [["martinique", 2], ["martinique", 6], ["martinique", 14], ["martinique", 10], ["martinique", 3], ["ladoga", 25], ["ladoga", 4], ["ladoga", 2], ["ladoga", 11], ["ladoga", 12], ["ladoga", 31], ["edinburgh", 2], null, ["edinburgh", 19], ["edinburgh", 3]],
     title: 'Подборка работ',
   },
 
@@ -107,7 +93,8 @@ window.CONTENT = {
     { href: '#contact', label: 'CONTACTS' },
   ],
 
-  /* ——— Тема по умолчанию: 'black' или 'white'.
-        Посетитель может переключить кнопкой в шапке — выбор запомнится. ——— */
-  defaultTheme: 'black',
 };
+
+window.escapePortfolioText = value => String(value).replace(/[&<>"]/g, char => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
+})[char]);

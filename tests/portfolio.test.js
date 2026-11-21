@@ -53,7 +53,7 @@ test('contact links and essential application mounts are preserved', () => {
   for (const id of ['home', 'series', 'seriesRow', 'seriesPrev', 'seriesNext', 'seriesProgress', 'selectedGrid', 'lb', 'lbImage', 'lbCounter', 'lbCaption', 'intro', 'introCount', 'introLine', 'introName', 'routeCurtain']) {
     assert.match(html, new RegExp(`\\bid="${id}"`), `missing mount #${id}`);
   }
-  for (const script of ['img/dims.js', 'intro.js', 'app.js']) assert.match(html, new RegExp(`src="${script.replaceAll('/', '\\/')}"`));
+  for (const script of ['img/dims.js', 'intro.js', 'app.js', 'palette.js', 'catalog.js']) assert.match(html.replaceAll("?v=3", ""), new RegExp(`src="${script.replaceAll('/', '\\/')}"`));
   assert.match(app, /window\.DIMS/);
 });
 

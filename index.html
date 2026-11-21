@@ -18,28 +18,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="image" href="img/me/01.jpg" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="color-scheme" content="dark light">
+  <meta name="darkreader-lock">
+  <script src="palette.js?v=3"></script>
+  <link rel="stylesheet" href="styles.css?v=3">
   <noscript><style>
     #mainNav, #themeToggle, .hero-actions a[href="#works"], #works, .selected,
     #about, #formats { display: none; }
   </style></noscript>
-  <script>
-    /* тема до первой отрисовки, чтобы не было вспышки */
-    try {
-      var savedTheme = localStorage.getItem('aistova-theme');
-      if (savedTheme === 'burgundy') {
-        savedTheme = 'white';
-        localStorage.setItem('aistova-theme', savedTheme);
-      }
-      if (savedTheme === 'white' || savedTheme === 'black') document.documentElement.dataset.theme = savedTheme;
-    } catch (e) {}
-    document.documentElement.classList.add('js');
-  </script>
-  <script defer src="content.js"></script>
+  <script defer src="catalog.js?v=3"></script>
+  <script defer src="content.js?v=3"></script>
   <script defer src="img/dims.js"></script>
-  <script defer src="intro.js"></script>
-  <script defer src="app.js"></script>
-  <script defer src="extras.js"></script>
+  <script defer src="intro.js?v=3"></script>
+  <script defer src="app.js?v=3"></script>
+  <script defer src="extras.js?v=3"></script>
 </head>
 <body>
   <div class="intro" id="intro" aria-hidden="true" hidden>
@@ -77,9 +69,10 @@
     </a>
     <div class="header-right">
       <nav class="nav" id="mainNav" aria-label="Основная навигация"></nav>
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить цветовую тему">
-        <span class="theme-dot theme-dot--black" aria-hidden="true"></span>
-        <span class="theme-dot theme-dot--white" aria-hidden="true"></span>
+      <button class="palette" id="themeToggle" type="button" aria-label="Включить белую тему" title="Включить белую тему">
+        <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4.2 4.2l2.2 2.2m11.2 11.2 2.2 2.2m0-15.6-2.2 2.2M6.4 17.6l-2.2 2.2"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14a9 9 0 0 1-11-11 9 9 0 1 0 11 11Z"/></svg>
+        <span>Белая тема</span>
       </button>
     </div>
   </header>
@@ -89,7 +82,6 @@
       <div class="hero-stage-wrap">
         <div class="hero-stage" id="heroStage">
           <img class="hero-base" src="img/me/01.jpg" width="1280" height="1280" alt="Анастасия Аистова" fetchpriority="high" id="heroImage">
-          <div class="hero-shade" aria-hidden="true"></div>
           <h1 class="hero-name" id="heroTitle">
             <span class="hero-name-line" id="heroNameLine1">ANASTASIA</span>
             <span class="hero-name-line hero-name-line--em" id="heroNameLine2">AISTOVA</span>

@@ -13,7 +13,7 @@
     martinique: { label: '', card: 'is-card-up' },
     ladoga: { label: '', card: '' }
   };
-  const PLACES = window.CONTENT.series.map((place) => ({
+  const PLACES = window.AISTOVA_SERIES.filter(s => s.published !== false).map((place) => ({
     ...place, ...(LAYOUT[place.id] || { label: '', card: '' })
   }));
   const BOUNDS = {
@@ -72,8 +72,8 @@
       stage.insertAdjacentHTML('beforeend', `
         <a class="map-point ${px(place.lon) > .62 && !LAYOUT[place.id] ? 'is-up is-card-left' : ''} ${place.label} ${place.card}" href="#/${place.id}" style="left:${px(place.lon) * 100}%;top:${py(place.lat) * 100}%">
           <i class="map-dot"></i>
-          <span class="map-label"><b>${place.title}</b><small>${coords(place)}</small></span>
-          <span class="map-card"><img src="img/${place.id}/01.jpg" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
+          <span class="map-label"><b>${window.escapePortfolioText(place.title)}</b><small>${coords(place)}</small></span>
+          <span class="map-card"><img src="img/${place.id}/${String(place.cover || 1).padStart(2, '0')}.jpg" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
         </a>`);
     });
 

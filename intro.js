@@ -9,7 +9,21 @@
       this.reducedMotion = reducedMotion;
       this.counter = element.querySelector('#introCount');
       this.line = element.querySelector('#introLine');
-      this.panels = [...element.querySelectorAll('.intro-panel')];
+      const active = window.AISTOVA_SERIES.filter(s => s.published !== false).slice(0, 3);
+      this.panels = [...element.querySelectorAll('.intro-panel')].filter((panel, index) => {
+        const series = active[index];
+        if (!series) { panel.remove(); return false; }
+        const name = panel.querySelector('b');
+        if (series.id !== name.textContent.toLowerCase()) {
+          const count = (series.sizes || window.DIMS[series.id]).length;
+          panel.querySelectorAll('img').forEach((image, n) => {
+            image.src = 'img/' + series.id + '/' + String(Math.min(n + 1, count)).padStart(2, '0') + '.jpg';
+          });
+        }
+        name.textContent = series.title;
+        return true;
+      });
+      element.style.setProperty('--panel-count', String(active.length));
       this.name = element.querySelector('#introName');
       this.done = false;
       this.shown = 0;                  // число на счётчике сейчас
@@ -17,7 +31,7 @@
     }
 
     shouldSkip() {
-      if (this.reducedMotion) return true;
+      if (this.reducedMotion || !this.panels.length) return true;
       if (new URLSearchParams(location.search).has('intro')) return false;   // ?intro — показать снова
       if (location.hash && location.hash !== '#top') return true;
       if (window.matchMedia('(min-width: 801px)').matches) return false;                        // прямая ссылка на серию
@@ -101,7 +115,7 @@
       // 2. серия кадров с ускорением, как очередь затвора
       const beats = [190, 170, 150, 130, 115, 100, 90, 80, 80];
       for (let k = 0; k < beats.length && alive(); k++) {
-        this.cut(k % 3, 1 + Math.floor(k / 3));
+        this.cut(k % this.panels.length, 1 + Math.floor(k / this.panels.length));
         this.target = 84 + Math.round((k + 1) / beats.length * 16);
         await wait(beats[k]);
       }
