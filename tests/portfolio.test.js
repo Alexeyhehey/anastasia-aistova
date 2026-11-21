@@ -9,6 +9,7 @@ const html = readFileSync(resolve(root, 'index.html'), 'utf8');
 const app = readFileSync(resolve(root, 'app.js'), 'utf8');
 const sandbox = { window: {} };
 vm.runInNewContext(readFileSync(resolve(root, 'img/dims.js'), 'utf8'), sandbox);
+vm.runInNewContext(readFileSync(resolve(root, 'content.js'), 'utf8'), sandbox);
 const dims = sandbox.window.DIMS;
 
 test('static document has unique IDs and one H1', () => {
@@ -41,9 +42,15 @@ test('all 90 series frames declared by dimensions exist on disk', () => {
 });
 
 test('contact links and essential application mounts are preserved', () => {
-  assert.match(html, /href="https:\/\/t\.me\/anaaistv"/);
-  assert.match(html, /href="https:\/\/instagram\.com\/rauyewdona"/);
-  for (const id of ['home', 'series', 'seriesGrid', 'selectedTrack', 'selectedPrev', 'selectedNext', 'selectedProgress', 'lb', 'lbImage', 'lbCounter', 'lbCaption', 'intro', 'introCount', 'introLine', 'introName', 'routeCurtain']) {
+  const { site } = sandbox.window.CONTENT;
+  for (const [id, url] of Object.entries({
+    contactTelegram: site.telegram, footerTelegram: site.telegram,
+    contactInstagram: site.instagram, footerInstagram: site.instagram,
+  })) {
+    const tag = html.match(new RegExp(`<a\\b[^>]*\\bid="${id}"[^>]*>`))?.[0];
+    assert.ok(tag?.includes(`href="${url}"`), `fallback link for #${id}`);
+  }
+  for (const id of ['home', 'series', 'seriesRow', 'seriesPrev', 'seriesNext', 'seriesProgress', 'selectedGrid', 'lb', 'lbImage', 'lbCounter', 'lbCaption', 'intro', 'introCount', 'introLine', 'introName', 'routeCurtain']) {
     assert.match(html, new RegExp(`\\bid="${id}"`), `missing mount #${id}`);
   }
   for (const script of ['img/dims.js', 'intro.js', 'app.js']) assert.match(html, new RegExp(`src="${script.replaceAll('/', '\\/')}"`));

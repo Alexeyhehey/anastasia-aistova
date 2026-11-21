@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://alexeyhehey.github.io/anastasia-aistova/">
   <meta name="theme-color" content="#000000">
   <meta name="description" content="Анастасия Аистова — индивидуальные и творческие съёмки в Санкт-Петербурге и Ленинградской области.">
   <title>Анастасия Аистова — фотограф</title>
@@ -19,6 +19,10 @@
   <link rel="preload" as="image" href="img/me/01.jpg" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <noscript><style>
+    #mainNav, #themeToggle, .hero-actions a[href="#works"], #works, .selected,
+    #about, #formats { display: none; }
+  </style></noscript>
   <script>
     /* тема до первой отрисовки, чтобы не было вспышки */
     try {
@@ -41,15 +45,15 @@
     </div>
     <div class="intro-panels">
       <figure class="intro-panel">
-        <div class="intro-shot"><img class="is-on" src="img/intro/edinburgh-1.jpg" alt=""><img src="img/intro/edinburgh-2.jpg" alt=""><img src="img/intro/edinburgh-3.jpg" alt=""><img src="img/intro/edinburgh-4.jpg" alt=""></div>
+        <div class="intro-shot"><img class="is-on" loading="lazy" src="img/intro/edinburgh-1.jpg" alt=""><img loading="lazy" src="img/intro/edinburgh-2.jpg" alt=""><img loading="lazy" src="img/intro/edinburgh-3.jpg" alt=""><img loading="lazy" src="img/intro/edinburgh-4.jpg" alt=""></div>
         <figcaption><i>01</i><b>Edinburgh</b></figcaption>
       </figure>
       <figure class="intro-panel">
-        <div class="intro-shot"><img class="is-on" src="img/intro/martinique-1.jpg" alt=""><img src="img/intro/martinique-2.jpg" alt=""><img src="img/intro/martinique-3.jpg" alt=""><img src="img/intro/martinique-4.jpg" alt=""></div>
+        <div class="intro-shot"><img class="is-on" loading="lazy" src="img/intro/martinique-1.jpg" alt=""><img loading="lazy" src="img/intro/martinique-2.jpg" alt=""><img loading="lazy" src="img/intro/martinique-3.jpg" alt=""><img loading="lazy" src="img/intro/martinique-4.jpg" alt=""></div>
         <figcaption><i>02</i><b>Martinique</b></figcaption>
       </figure>
       <figure class="intro-panel">
-        <div class="intro-shot"><img class="is-on" src="img/intro/ladoga-1.jpg" alt=""><img src="img/intro/ladoga-2.jpg" alt=""><img src="img/intro/ladoga-3.jpg" alt=""><img src="img/intro/ladoga-4.jpg" alt=""></div>
+        <div class="intro-shot"><img class="is-on" loading="lazy" src="img/intro/ladoga-1.jpg" alt=""><img loading="lazy" src="img/intro/ladoga-2.jpg" alt=""><img loading="lazy" src="img/intro/ladoga-3.jpg" alt=""><img loading="lazy" src="img/intro/ladoga-4.jpg" alt=""></div>
         <figcaption><i>03</i><b>Ladoga</b></figcaption>
       </figure>
     </div>
@@ -63,7 +67,7 @@
   </div>
 
   <header class="site-header" id="siteHeader">
-    <a class="brand" href="#top" aria-label="Анастасия Аистова — к началу страницы">
+    <a class="brand" href="#top" aria-label="AA · Анастасия Аистова — к началу страницы">
       <span class="brand-mark">AA</span>
       <span class="brand-name">Анастасия Аистова</span>
     </a>
@@ -91,12 +95,12 @@
         <span class="hero-scroll" aria-hidden="true">листайте</span>
       </div>
       <div class="hero-content">
-        <p class="eyebrow" data-c="site.city"></p>
-        <h2 class="hero-statement" data-c="site.tagline"></h2>
+        <p class="eyebrow" data-c="site.city">Санкт-Петербург и Ленинградская область</p>
+        <h2 class="hero-statement" data-c="site.tagline">Индивидуальные и творческие съёмки</h2>
         <p class="hero-intro" data-c="hero.intro"></p>
         <div class="hero-actions">
           <a class="btn" href="#works"><span data-c="hero.ctaWorks"></span><svg viewBox="0 0 32 16" aria-hidden="true"><path d="M0 8h30M23 1l7 7-7 7"/></svg></a>
-          <a class="btn btn--ghost" href="#contact"><span data-c="hero.ctaContact"></span></a>
+          <a class="btn btn--ghost" href="#contact"><span data-c="hero.ctaContact">Обсудить съёмку</span></a>
         </div>
       </div>
     </section>
@@ -165,15 +169,15 @@
 
     <section class="contact-section" id="contact" aria-labelledby="contactTitle">
       <div class="contact-inner">
-        <h2 id="contactTitle" class="contact-giant" data-reveal data-c="contacts.label"></h2>
+        <h2 id="contactTitle" class="contact-giant" data-reveal data-c="contacts.label">CONTACTS</h2>
         <p class="contact-invite" data-reveal data-c="contacts.invite"></p>
         <div class="contact-rows" data-reveal>
-          <a class="contact-row" id="contactTelegram" target="_blank" rel="noopener">
-            <span class="contact-row-label" data-c="site.telegramLabel"></span>
+          <a class="contact-row" id="contactTelegram" href="https://t.me/anaaistv" target="_blank" rel="noopener">
+            <span class="contact-row-label" data-c="site.telegramLabel">Telegram</span>
             <span class="contact-row-arrow" aria-hidden="true">↗︎</span>
           </a>
-          <a class="contact-row" id="contactInstagram" target="_blank" rel="noopener">
-            <span class="contact-row-label" data-c="site.instagramLabel"></span>
+          <a class="contact-row" id="contactInstagram" href="https://instagram.com/rauyewdona" target="_blank" rel="noopener">
+            <span class="contact-row-label" data-c="site.instagramLabel">Instagram</span>
             <span class="contact-row-arrow" aria-hidden="true">↗︎</span>
           </a>
         </div>
@@ -186,7 +190,7 @@
 
   <footer class="site-footer">
     <span>© <span id="year">2026</span> <span data-c="site.name"></span></span>
-    <span class="footer-links"><a id="footerTelegram" target="_blank" rel="noopener">Telegram</a><a id="footerInstagram" target="_blank" rel="noopener">Instagram</a></span>
+    <span class="footer-links"><a id="footerTelegram" href="https://t.me/anaaistv" target="_blank" rel="noopener">Telegram</a><a id="footerInstagram" href="https://instagram.com/rauyewdona" target="_blank" rel="noopener">Instagram</a></span>
     <a href="#top">Наверх ↑</a>
   </footer>
 

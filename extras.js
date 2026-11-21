@@ -65,7 +65,7 @@
       const count = window.DIMS[place.id].length;
       const km = niceKm(distanceKm(HOME, place));
       stage.insertAdjacentHTML('beforeend', `
-        <a class="map-point ${place.label} ${place.card}" href="#/${place.id}" style="left:${px(place.lon) * 100}%;top:${py(place.lat) * 100}%" aria-label="Открыть серию «${place.title}», ${count} ${plural(count)}">
+        <a class="map-point ${place.label} ${place.card}" href="#/${place.id}" style="left:${px(place.lon) * 100}%;top:${py(place.lat) * 100}%">
           <i class="map-dot"></i>
           <span class="map-label"><b>${place.title}</b><small>${coords(place)}</small></span>
           <span class="map-card"><img src="img/intro/${place.id}-1.jpg" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>

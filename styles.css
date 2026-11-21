@@ -403,12 +403,12 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 .contact-row-arrow { font-family: var(--font-body); font-weight: 400; font-size: .8em; transition: transform 300ms var(--ease-out); }
 .contact-row:hover, .contact-row:focus-visible { background: var(--inv-ink); color: var(--inv-bg); }
 .contact-row:hover .contact-row-arrow, .contact-row:focus-visible .contact-row-arrow { transform: translate(10px, -10px); }
-.contact-geo { padding: clamp(22px, 2.6vw, 36px) var(--gutter) 0; color: color-mix(in srgb, var(--inv-ink) 62%, transparent); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+.contact-geo { padding: clamp(22px, 2.6vw, 36px) var(--gutter) 0; color: color-mix(in srgb, var(--inv-ink) 76%, transparent); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
 
 .site-footer {
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px;
   padding: 26px var(--gutter) calc(34px + env(safe-area-inset-bottom, 0px));
-  background: var(--inv-bg); color: color-mix(in srgb, var(--inv-ink) 62%, transparent);
+  background: var(--inv-bg); color: color-mix(in srgb, var(--inv-ink) 76%, transparent);
   border-top: 1px solid var(--inv-line);
   font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
   transition: background-color 500ms var(--ease-out);
@@ -528,6 +528,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .map { padding-inline: 20px; margin-top: 40px; }
   .map-stage { aspect-ratio: 4 / 5; overflow: hidden; }
   .map-label b { font-size: 20px; }
+  .map-point.is-down .map-label { left: 50%; transform: translateX(-50%); }
   .map-label small, .map-home em, .map-tick--lon { display: none; }
   .map-note { margin-top: 14px; }
   .map-water { font-size: 11px; letter-spacing: .16em; max-width: 40vw; white-space: normal; text-align: center; line-height: 1.5; }
@@ -538,7 +539,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .works-hint { grid-column: 1 / 8; font-size: 10.5px; }
   .row-controls { grid-column: 8 / 13; }
   .row-controls button { width: 44px; height: 44px; }
-  .series-row { padding-inline: 20px; gap: 12px; }
+  .series-row { padding-inline: 20px; scroll-padding-inline: 20px; gap: 12px; }
   .series-card { flex-basis: 76vw; }
   .series-card-title { font-size: 26px; }
   .row-progress { margin-inline: 20px; }
@@ -596,6 +597,20 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .lightbox-prev { left: 16px; }
   .lightbox-next { right: 16px; }
   .lightbox-hint { display: none; }
+}
+
+@media (max-width: 420px) {
+  .site-header { padding-inline: 10px; gap: 8px; }
+  .brand-mark { font-size: 20px; }
+  .header-right { flex: 1; justify-content: space-between; gap: 6px; }
+  .nav { flex: 1; justify-content: space-between; gap: 4px; letter-spacing: 0; }
+  .theme-toggle { justify-content: center; min-width: 44px; gap: 4px; }
+}
+
+@media (max-width: 359px) {
+  .site-header { padding-inline: 6px; gap: 4px; }
+  .brand-mark { font-size: 16px; }
+  .header-right { gap: 4px; }
 }
 
 @media (max-width: 390px) {

@@ -59,20 +59,21 @@
     if (introWords[1]) introWords[1].textContent = C.site.nameLatin[1];
 
     $('.brand-name').textContent = C.site.name;
+    $('.brand').setAttribute('aria-label', `AA · ${C.site.name} — к началу страницы`);
     [['contactTelegram', 'telegram'], ['footerTelegram', 'telegram'],
      ['contactInstagram', 'instagram'], ['footerInstagram', 'instagram']]
       .forEach(([id, key]) => { const link = document.getElementById(id); if (link) link.href = C.site[key]; });
 
     $('#aboutCopy').innerHTML = C.about.paragraphs.map((text) => `<p>${text}</p>`).join('');
 
-    $('#formatList').innerHTML = C.services.formats.map((format, index) => `
+    $('#formatList').innerHTML = C.services.formats.map((format) => `
       <article class="format" data-reveal>
         <div class="format-title"><span>${format.kicker}</span><h3>${format.title}</h3></div>
         <div class="format-description">
           <p>${format.text}</p>
           <p class="format-includes">Что включено</p>
           <ul>${format.includes.map((item) => `<li>${item}</li>`).join('')}</ul>
-          ${index === C.services.formats.length - 1 ? `<p class="price">${C.services.price}</p>` : ''}
+          <p class="price">${format.price || C.services.price}</p>
           <a class="btn" href="${C.site.telegram}" target="_blank" rel="noopener"><span>${C.services.cta}</span>${arrow}</a>
         </div>
       </article>`).join('');
@@ -108,9 +109,9 @@
 
   function renderSeriesRow() {
     $('#seriesRow').innerHTML = SERIES.map((series) => `
-      <a class="series-card" data-series="${series.id}" href="#/${series.id}" data-reveal aria-label="Открыть серию «${series.titleRu}», ${series.frames.length} ${plural(series.frames.length)}">
+      <a class="series-card" data-series="${series.id}" href="#/${series.id}" data-reveal>
         <div class="series-card-cover">
-          <img class="cover-main" src="${series.cover.src}" width="${series.cover.w}" height="${series.cover.h}" alt="Обложка серии «${series.titleRu}»" loading="lazy">
+          <img class="cover-main" src="${series.cover.src}" width="${series.cover.w}" height="${series.cover.h}" alt="" loading="lazy">
           <img class="cover-alt" src="${series.alternate.src}" width="${series.alternate.w}" height="${series.alternate.h}" alt="" loading="lazy" aria-hidden="true">
         </div>
         <span class="series-card-title">${series.title}</span>
@@ -128,6 +129,7 @@
     let scheduled = false;
     function update() {
       scheduled = false;
+      if (!track.clientWidth) return;
       const max = track.scrollWidth - track.clientWidth;
       controls.classList.toggle('is-hidden', max <= 4);   // всё помещается — стрелки не нужны
       previous.disabled = track.scrollLeft <= 2;
@@ -144,7 +146,8 @@
     }, { passive: true });
     previous.addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * .72, behavior: reducedMotion ? 'auto' : 'smooth' }));
     next.addEventListener('click', () => track.scrollBy({ left: track.clientWidth * .72, behavior: reducedMotion ? 'auto' : 'smooth' }));
-    window.addEventListener('resize', update, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(update).observe(track);
+    else window.addEventListener('resize', update, { passive: true });
     update();
   }
 
@@ -242,6 +245,19 @@
 
   /* ---------------- Маршрутизация ---------------- */
 
+  // Сохраняем точку входа в записи главной до того, как сменится hash.
+  home.addEventListener('click', (event) => {
+    const link = event.target.closest('.series-card, .map-point');
+    if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    history.replaceState({ ...history.state, portfolioReturn: {
+      hash: link.hash,
+      fromCard: link.classList.contains('series-card'),
+      top: link.getBoundingClientRect().top,
+      rowLeft: $('#seriesRow').scrollLeft,
+      width: innerWidth,
+    } }, '');
+  }, true);
+
   function route() {
     const id = location.hash.startsWith('#/') ? location.hash.slice(2) : null;
     const series = SERIES.find((item) => item.id === id);
@@ -255,10 +271,7 @@
       seriesPage.hidden = false;
       document.body.classList.add('is-series');
       document.title = `${series.titleRu} — ${C.site.name}`;
-      const root = document.documentElement;
-      root.style.scrollBehavior = 'auto';
-      window.scrollTo(0, 0);
-      root.style.scrollBehavior = '';
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     } else {
       if (id) history.replaceState(null, '', location.pathname + location.search);
       activeSeriesId = null;
@@ -266,16 +279,31 @@
       home.hidden = false;
       document.body.classList.remove('is-series');
       document.title = `${C.site.name} — фотограф`;
-      if (previousId && location.hash && !location.hash.startsWith('#/')) {
+      const saved = previousId && history.state?.portfolioReturn;
+      const returnLink = saved && $$(saved.fromCard ? '.series-card' : '.map-point', home)
+        .find(link => link.hash === saved.hash);
+      if (returnLink && !pendingReturn) {
+        if (innerWidth === saved.width) {
+          $('#seriesRow').scrollTo({ left: saved.rowLeft, behavior: 'instant' });
+          window.scrollBy({ top: returnLink.getBoundingClientRect().top - saved.top, behavior: 'instant' });
+        } else {
+          returnLink.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' });
+        }
+        returnLink.focus({ preventScroll: true });
+      } else if (previousId && location.hash && !location.hash.startsWith('#/')) {
         const target = document.getElementById(location.hash.slice(1));
         if (target) {
           // возврат со страницы серии: целевая секция проявляется сразу, без «вспышки» reveal-анимации
           const section = target.closest('section') || target;
           $$('[data-reveal]:not(.is-visible)', section).forEach((el) => el.classList.add('is-visible'));
-          const instant = Boolean(pendingReturn);
           requestAnimationFrame(() => {
-            target.scrollIntoView({ behavior: instant || reducedMotion ? 'auto' : 'smooth' });
-            if (pendingReturn) finishFlyBack(target);
+            if (pendingReturn) {
+              const card = $(`.series-card[data-series="${pendingReturn.series.id}"]`);
+              card.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' });
+              finishFlyBack();
+            } else {
+              target.scrollIntoView({ behavior: 'instant' });
+            }
           });
         } else if (pendingReturn) {
           finishFlyBack(null);
@@ -328,8 +356,8 @@
   }
 
   function flyBack(series) {
-    if (reducedMotion) { location.hash = '#works'; return; }
     pendingReturn = { series, clone: null };
+    if (reducedMotion) { location.hash = '#works'; return; }
     const clone = document.createElement('img');
     clone.className = 'zoom-clone';
     clone.src = series.cover.src;
@@ -374,6 +402,7 @@
 
   const lb = $('#lb');
   const lbImage = $('#lbImage');
+  const lightboxBackground = [$('#siteHeader'), home, seriesPage, $('.site-footer')];
   function lightboxOpen() { return !lb.hidden; }
 
   function showFrame(index) {
@@ -399,14 +428,16 @@
     focusBeforeLightbox = trigger || document.activeElement;
     $('#lbSeries').textContent = series.title;
     lb.hidden = false;
+    lightboxBackground.forEach(element => { element.inert = true; });
     document.body.classList.add('is-locked');
     showFrame(index);
-    requestAnimationFrame(() => $('.lightbox-close', lb).focus());
+    $('.lightbox-close', lb).focus({ preventScroll: true });
   }
 
   function closeLightbox(restoreFocus = true) {
     if (!lightboxOpen()) return;
     lb.hidden = true;
+    lightboxBackground.forEach(element => { element.inert = false; });
     document.body.classList.remove('is-locked');
     if (restoreFocus && focusBeforeLightbox?.isConnected) focusBeforeLightbox.focus({ preventScroll: true, focusVisible: false });
   }
@@ -417,7 +448,7 @@
     // клики по обложкам серий — кинематографичный переход
     $('#seriesRow').addEventListener('click', (event) => {
       const card = event.target.closest('.series-card');
-      if (!card) return;
+      if (!card || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       const series = SERIES.find((item) => item.id === card.dataset.series);
       if (series) flyToSeries(card, series);
@@ -451,7 +482,8 @@
         const controls = $$('button', lb);
         const first = controls[0];
         const last = controls[controls.length - 1];
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        if (!lb.contains(document.activeElement)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+        else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
       }
     });
