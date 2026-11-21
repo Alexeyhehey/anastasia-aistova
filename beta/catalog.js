@@ -103,5 +103,21 @@ window.AISTOVA_SERIES = [
         1500
       ]
     ]
+  },
+  {
+    "id": "12312312312312-246a690a",
+    "title": "12312312312312",
+    "titleRu": "12312312312",
+    "lat": 50.036,
+    "lon": 30.282,
+    "cover": 1,
+    "selected": [],
+    "betaMedia": true,
+    "sizes": [
+      [
+        959,
+        944
+      ]
+    ]
   }
 ];
