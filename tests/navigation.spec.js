@@ -13,7 +13,7 @@ test('the header fits a narrow phone and the theme control works', async ({ page
     }
   }
   await page.locator('#themeToggle').click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'burgundy');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'white');
 });
 
 test('the first frame of the next series is already at the top', async ({ page }) => {

@@ -4,10 +4,8 @@
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   class CinematicIntro {
-    constructor({ element, series, shotsPerSeries = 4, reducedMotion }) {
+    constructor({ element, reducedMotion }) {
       this.element = element;
-      this.series = series;            // [{ id, title }]
-      this.shots = shotsPerSeries;
       this.reducedMotion = reducedMotion;
       this.counter = element.querySelector('#introCount');
       this.line = element.querySelector('#introLine');
@@ -21,7 +19,8 @@
     shouldSkip() {
       if (this.reducedMotion) return true;
       if (new URLSearchParams(location.search).has('intro')) return false;   // ?intro — показать снова
-      if (location.hash.startsWith('#/')) return true;                        // прямая ссылка на серию
+      if (location.hash && location.hash !== '#top') return true;
+      if (window.matchMedia('(min-width: 801px)').matches) return false;                        // прямая ссылка на серию
       try { return sessionStorage.getItem('aistova-intro') === 'seen'; } catch { return false; }
     }
 
@@ -45,7 +44,7 @@
     }
 
     preload() {
-      const sources = this.series.flatMap((item) => Array.from({ length: this.shots }, (_, k) => `img/intro/${item.id}-${k + 1}.jpg`));
+      const sources = [...this.element.querySelectorAll('.intro-shot img')].map(image => image.src);
       sources.push('img/me/01.jpg');
       let loaded = 0;
       return Promise.all(sources.map((src) => new Promise((resolve) => {

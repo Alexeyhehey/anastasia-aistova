@@ -14,7 +14,7 @@
   /* ---------------- Данные ---------------- */
 
   const SERIES = C.series.map((cfg) => {
-    const frames = window.DIMS[cfg.id].map(([w, h], index) => ({
+    const frames = (cfg.sizes || window.DIMS[cfg.id]).map(([w, h], index) => ({
       src: `img/${cfg.id}/${pad(index + 1)}.jpg`, w, h, index
     }));
     return { ...cfg, frames, cover: frames[0], alternate: frames[Math.min(5, frames.length - 1)] };
@@ -25,7 +25,9 @@
     title: C.selected.label || 'SELECTED',
     frames: window.DIMS.selected.map(([w, h], index) => ({
       src: `img/selected/${pad(index + 1)}.jpg`, w, h, index
-    }))
+    })).concat(SERIES.flatMap(series =>
+      (series.selected || []).map(number => series.frames[number - 1]).filter(Boolean)
+    )).map((frame, index) => ({ ...frame, index }))
   };
 
   const home = $('#home');
@@ -86,7 +88,7 @@
 
   function syncThemeMeta() {
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = document.documentElement.dataset.theme === 'burgundy' ? '#70020F' : '#000000';
+    if (meta) meta.content = document.documentElement.dataset.theme === 'white' ? '#ffffff' : '#000000';
   }
 
   function initTheme() {
@@ -95,11 +97,11 @@
     if (!saved) document.documentElement.dataset.theme = C.defaultTheme || 'black';
     syncThemeMeta();
     const toggle = $('#themeToggle');
-    toggle.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'burgundy'));
+    toggle.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'white'));
     toggle.addEventListener('click', () => {
-      const next = document.documentElement.dataset.theme === 'black' ? 'burgundy' : 'black';
+      const next = document.documentElement.dataset.theme === 'black' ? 'white' : 'black';
       document.documentElement.dataset.theme = next;
-      toggle.setAttribute('aria-pressed', String(next === 'burgundy'));
+      toggle.setAttribute('aria-pressed', String(next === 'white'));
       try { localStorage.setItem('aistova-theme', next); } catch {}
       syncThemeMeta();
     });
@@ -154,8 +156,17 @@
   /* ---------------- Подборка ---------------- */
 
   function renderSelected() {
+    // Пары портретов чередуются с одиночными разворотами. Порядок совпадает с лайтбоксом.
+    let paired = false;
+    const layouts = SELECTED.frames.map((frame, index, frames) => {
+      if (paired) { paired = false; return ''; }
+      const next = frames[index + 1];
+      if (frame.w > frame.h || !next || next.w > next.h || index % 7 === 5) return 'is-solo';
+      paired = true;
+      return 'is-offset';
+    });
     $('#selectedGrid').innerHTML = SELECTED.frames.map((frame) => `
-      <button type="button" class="selected-item ${frame.w > frame.h ? 'selected-item--wide' : ''}" data-s="${frame.index}" data-reveal aria-label="Открыть кадр ${frame.index + 1} из ${SELECTED.frames.length}">
+      <button type="button" class="selected-item ${layouts[frame.index]} ${frame.w > frame.h ? 'selected-item--wide' : ''}" data-s="${frame.index}" data-reveal aria-label="Открыть кадр ${frame.index + 1} из ${SELECTED.frames.length}">
         <img src="${frame.src}" width="${frame.w}" height="${frame.h}" alt="Подборка работ, кадр ${frame.index + 1}" loading="lazy">
       </button>
     `).join('');
@@ -507,8 +518,6 @@
   function initIntro() {
     const intro = new window.CinematicIntro({
       element: $('#intro'),
-      series: SERIES.map((series) => ({ id: series.id, title: series.title })),
-      shotsPerSeries: 4,
       reducedMotion
     });
     intro.start();

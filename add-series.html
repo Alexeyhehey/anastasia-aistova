@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex"><title>Добавить фотосессию · Анастасия Аистова</title>
+<style>
+*{box-sizing:border-box}body{margin:0 auto;max-width:760px;padding:32px 20px 64px;font:16px/1.55 system-ui;color:#171717;background:#fafaf8}
+h1,h2{line-height:1.15}h2{margin-top:36px}fieldset{border:0;padding:0;margin:0}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+label{display:block}input:not([type=checkbox]),textarea{display:block;width:100%;padding:10px;border:1px solid #888;background:white;font:inherit}
+button{padding:12px 18px;color:white;background:#181818;border:0;font:inherit;cursor:pointer}button:disabled{opacity:.6}a{color:inherit}
+#list{padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}#list label{overflow-wrap:anywhere;background:white;padding:8px;font-size:14px}
+#list img{display:block;width:100%;height:100px;object-fit:contain;margin-bottom:6px}textarea{min-height:120px}#status{font-weight:600}
+</style><script defer src="content.js"></script><script defer src="prepare-series.js"></script></head>
+<body><a href="./">← Портфолио</a><h1>Добавить фотосессию</h1>
+<p>Откройте эту страницу в Chrome или Edge на компьютере. Здесь можно подготовить фотографии и точку на карте. Для публикации понадобится доступ на запись в репозиторий сайта.</p>
+<form id="editor"><fieldset id="fields"><h2>1. Название и точка на карте</h2><div class="fields">
+<label>Название серии<input required id="title" maxlength="60" placeholder="Lisbon"></label>
+<label>Название по-русски<input required id="russian" maxlength="60" placeholder="Лиссабон"></label>
+<label>Имя новой папки<input required id="slug" pattern="[a-z][a-z0-9\-]*" maxlength="60" placeholder="lisbon"></label>
+</div><p>Выберите на карте мира место, с которым ассоциируется серия. Скопируйте его координаты. Первое число — широта, второе — долгота.</p><div class="fields">
+<label>Широта<input required type="number" step="any" min="-90" max="90" id="lat" placeholder="38.72"></label>
+<label>Долгота<input required type="number" step="any" min="-180" max="180" id="lon" placeholder="-9.14"></label></div>
+<h2>2. Фотографии и подборка</h2><p>Выберите все JPEG одной съёмки. Порядок задают имена файлов, первый кадр станет обложкой. Галочками отметьте фотографии для SELECTED. Они останутся и в полной серии.</p>
+<input type="file" id="photos" aria-label="Фотографии серии" multiple required accept=".jpg,.jpeg,image/jpeg"><div id="list"></div>
+<button>Подготовить папку и запись</button></fieldset></form><p role="status" id="status"></p>
+<section id="result" hidden><h2>3. Публикация</h2>
+<ol><li>Откройте <a href="https://github.com/Alexeyhehey/anastasia-aistova/upload/main/img" target="_blank" rel="noopener">загрузку в папку img на GitHub</a>. Перетащите созданную папку целиком и нажмите <b>Commit changes</b>. Для большой съёмки загружайте файлы партиями в одну папку.</li>
+<li>Скопируйте запись ниже. Откройте <a href="https://github.com/Alexeyhehey/anastasia-aistova/edit/main/content.js" target="_blank" rel="noopener">редактирование content.js</a>, найдите строку <code>series: [</code> и вставьте запись сразу под ней. Нажмите <b>Commit changes</b>.</li>
+<li>После завершения публикации GitHub Pages откройте портфолио. Появятся точка на карте, обложка и полная серия. Отмеченные кадры появятся в конце SELECTED.</li></ol>
+<label>Запись для content.js<textarea readonly id="snippet"></textarea></label><button type="button" id="copy">Скопировать запись</button></section>
+<p>Чтобы добавить в SELECTED кадры уже опубликованной серии, укажите в её записи поле <code>selected: [2, 5]</code> или дополните существующий список. Номера начинаются с единицы.</p></body></html>

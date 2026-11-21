@@ -27,7 +27,11 @@
     /* тема до первой отрисовки, чтобы не было вспышки */
     try {
       var savedTheme = localStorage.getItem('aistova-theme');
-      if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+      if (savedTheme === 'burgundy') {
+        savedTheme = 'white';
+        localStorage.setItem('aistova-theme', savedTheme);
+      }
+      if (savedTheme === 'white' || savedTheme === 'black') document.documentElement.dataset.theme = savedTheme;
     } catch (e) {}
     document.documentElement.classList.add('js');
   </script>
@@ -75,7 +79,7 @@
       <nav class="nav" id="mainNav" aria-label="Основная навигация"></nav>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить цветовую тему">
         <span class="theme-dot theme-dot--black" aria-hidden="true"></span>
-        <span class="theme-dot theme-dot--wine" aria-hidden="true"></span>
+        <span class="theme-dot theme-dot--white" aria-hidden="true"></span>
       </button>
     </div>
   </header>

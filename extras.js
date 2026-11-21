@@ -16,7 +16,12 @@
   const PLACES = window.CONTENT.series.map((place) => ({
     ...place, ...(LAYOUT[place.id] || { label: '', card: '' })
   }));
-  const BOUNDS = { west: -78, east: 66, north: 72, south: 4 };
+  const BOUNDS = {
+    west: Math.min(-78, ...PLACES.map(p => p.lon - 16)),
+    east: Math.max(66, ...PLACES.map(p => p.lon + 24)),
+    north: Math.max(72, ...PLACES.map(p => p.lat + 10)),
+    south: Math.min(4, ...PLACES.map(p => p.lat - 10))
+  };
   // географические подписи для ощущения карты (без контуров суши)
   const WATERS = [
     { text: 'Атлантический океан', lat: 34, lon: -38 },
@@ -62,13 +67,13 @@
 
     // точки серий
     PLACES.forEach((place) => {
-      const count = window.DIMS[place.id].length;
+      const count = (place.sizes || window.DIMS[place.id]).length;
       const km = niceKm(distanceKm(HOME, place));
       stage.insertAdjacentHTML('beforeend', `
-        <a class="map-point ${place.label} ${place.card}" href="#/${place.id}" style="left:${px(place.lon) * 100}%;top:${py(place.lat) * 100}%">
+        <a class="map-point ${px(place.lon) > .62 && !LAYOUT[place.id] ? 'is-up is-card-left' : ''} ${place.label} ${place.card}" href="#/${place.id}" style="left:${px(place.lon) * 100}%;top:${py(place.lat) * 100}%">
           <i class="map-dot"></i>
           <span class="map-label"><b>${place.title}</b><small>${coords(place)}</small></span>
-          <span class="map-card"><img src="img/intro/${place.id}-1.jpg" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
+          <span class="map-card"><img src="img/${place.id}/01.jpg" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
         </a>`);
     });
 
