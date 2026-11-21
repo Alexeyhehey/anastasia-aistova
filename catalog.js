@@ -56,7 +56,7 @@ window.AISTOVA_SERIES = [
         944
       ]
     ],
-    "published": false
+    "published": true
   },
   {
     "id": "test-489a2413",
