@@ -295,6 +295,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   display: flex; gap: clamp(14px, 1.8vw, 28px);
   margin-top: 34px;
   padding-inline: var(--gutter);
+  scroll-padding-inline: var(--gutter);   /* обложка встаёт на поле страницы, а не к краю экрана */
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   scroll-snap-type: x mandatory;
