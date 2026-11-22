@@ -15,8 +15,8 @@ window.AISTOVA_SERIES = [
     "id": "martinique",
     "title": "Martinique",
     "titleRu": "Мартиника",
-    "lat": 8.097,
-    "lon": -64.394,
+    "lat": 14.67,
+    "lon": -61,
     "selected": [
       1,
       2,
