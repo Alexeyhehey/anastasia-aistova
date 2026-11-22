@@ -47,7 +47,7 @@ test('Back restores the cover after a manual scroll from the homepage', async ({
   await expect(page.locator('.series-hero h1')).toHaveText('Martinique');
 });
 
-for (const folder of ['']) {
+for (const folder of ['', 'beta/']) {
   test(`${folder || 'site'}: Back closes the photo viewer and keeps the page`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.emulateMedia({ reducedMotion: 'reduce' });

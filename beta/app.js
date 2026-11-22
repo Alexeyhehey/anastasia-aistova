@@ -45,6 +45,7 @@
   let currentFrame = 0;
   let focusBeforeLightbox = null;
   let pendingReturn = null;      // серия, к чьей обложке летим обратно
+  let lightboxBacks = 0;         // свои history.back() после закрытия просмотра кнопкой
 
   $('#year').textContent = new Date().getFullYear();
 
@@ -152,10 +153,34 @@
     });
   }
 
+  function deskClasses(frames) {
+    // ПК: в ряду 12 колонок, вертикальный кадр занимает 4, горизонтальный 8 — кадр целиком помещается в экран.
+    // Порядок кадров не меняется: неполный ряд встаёт по центру, второй кадр тройки или пары чуть опущен.
+    const classes = frames.map(() => '');
+    let row = [];
+    let used = 0;
+    const close = () => {
+      if (used === 8) classes[row[0]] = 'at-3';
+      if (used === 4) classes[row[0]] = 'at-5';
+      if (row.length === 3 || (row.length === 2 && used === 8)) classes[row[1]] = 'is-low';
+      row = [];
+      used = 0;
+    };
+    frames.forEach((frame, index) => {
+      const span = frame.w > frame.h ? 8 : 4;
+      if (used + span > 12) close();
+      row.push(index);
+      used += span;
+    });
+    close();
+    return classes;
+  }
+
   function renderSelected() {
     const layouts = spreadClasses(SELECTED.frames);
+    const desk = deskClasses(SELECTED.frames);
     $('#selectedGrid').innerHTML = SELECTED.frames.map((frame) => `
-      <button type="button" class="selected-item ${layouts[frame.index]} ${frame.w > frame.h ? 'selected-item--wide' : ''}" data-s="${frame.index}" data-reveal aria-label="Открыть кадр ${frame.index + 1} из ${SELECTED.frames.length}">
+      <button type="button" class="selected-item ${layouts[frame.index]} ${desk[frame.index]} ${frame.w > frame.h ? 'selected-item--wide' : ''}" data-s="${frame.index}" data-reveal aria-label="Открыть кадр ${frame.index + 1} из ${SELECTED.frames.length}">
         <img src="${frame.src}" width="${frame.w}" height="${frame.h}" alt="Подборка работ, кадр ${frame.index + 1}" loading="lazy">
       </button>
     `).join('');
@@ -223,6 +248,7 @@
 
   function renderSeries(series) {
     const layouts = ['is-solo frame--opener', ...spreadClasses(series.frames.slice(1))];
+    const desk = deskClasses(series.frames);
     const next = SERIES[(SERIES.indexOf(series) + 1) % SERIES.length];
     seriesPage.innerHTML = `
       <section class="series-hero">
@@ -233,7 +259,7 @@
         <span class="series-route-count">${series.frames.length} ${plural(series.frames.length)}</span>
       </section>
       <div class="frames">${series.frames.map((frame, index) => `
-        <button type="button" class="frame ${layouts[index]} ${frame.w > frame.h ? 'frame--wide' : ''}" data-k="${index}" data-reveal aria-label="Открыть кадр ${index + 1} из ${series.frames.length}">
+        <button type="button" class="frame ${layouts[index]} ${desk[index]} ${frame.w > frame.h ? 'frame--wide' : ''}" data-k="${index}" data-reveal aria-label="Открыть кадр ${index + 1} из ${series.frames.length}">
           <img src="${frame.src}" width="${frame.w}" height="${frame.h}" alt="Серия «${escape(series.titleRu)}», кадр ${index + 1}" loading="lazy">
         </button>`).join('')}
       </div>
@@ -264,7 +290,7 @@
     const id = location.hash.startsWith('#/') ? location.hash.slice(2) : null;
     const series = SERIES.find((item) => item.id === id);
     const previousId = activeSeriesId;
-    if (lightboxOpen()) closeLightbox(false);
+    if (lightboxOpen()) closeLightbox(false, true);
 
     if (series) {
       activeSeriesId = series.id;
@@ -429,14 +455,32 @@
     document.body.classList.add('is-locked');
     showFrame(index);
     $('.lightbox-close', lb).focus({ preventScroll: true });
+    // Просмотр — отдельная запись истории: «Назад» закрывает кадр, а не уводит со страницы.
+    if (!history.state?.lightbox) history.pushState({ ...history.state, lightbox: series.id }, '');
   }
 
-  function closeLightbox(restoreFocus = true) {
+  function closeLightbox(restoreFocus = true, fromHistory = false) {
     if (!lightboxOpen()) return;
     lb.hidden = true;
     lightboxBackground.forEach(element => { element.inert = false; });
     document.body.classList.remove('is-locked');
     if (restoreFocus && focusBeforeLightbox?.isConnected) focusBeforeLightbox.focus({ preventScroll: true, focusVisible: false });
+    if (!fromHistory && history.state?.lightbox) { lightboxBacks += 1; history.back(); }
+  }
+
+  function syncLightboxWithHistory() {
+    const entry = history.state?.lightbox;
+    if (lightboxBacks) {
+      // Запись просмотра снята после закрытия кнопкой. Если кадр уже открыли снова — возвращаем её.
+      lightboxBacks -= 1;
+      if (lightboxOpen() && !entry) history.pushState({ ...history.state, lightbox: lightboxSeries.id }, '');
+      return;
+    }
+    if (lightboxOpen()) {
+      if (!entry) closeLightbox(true, true);
+    } else if (entry && entry === lightboxSeries?.id && entry === (activeSeriesId || 'selected')) {
+      openLightbox(lightboxSeries, currentFrame, focusBeforeLightbox);   // «Вперёд» возвращает тот же кадр
+    }
   }
 
   function initLightbox() {
@@ -497,6 +541,13 @@
       touchStart = null;
     });
     $('.lightbox-figure', lb).addEventListener('pointercancel', () => { touchStart = null; });
+
+    // После перезагрузки просмотр закрыт: убираем его отметку из текущей записи истории.
+    if (history.state?.lightbox) {
+      const { lightbox, ...rest } = history.state;
+      history.replaceState(rest, '');
+    }
+    window.addEventListener('popstate', syncLightboxWithHistory);
   }
 
   /* ---------------- Заставка ---------------- */
