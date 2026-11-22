@@ -529,11 +529,14 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .hero-stage-wrap { height: auto; padding-top: calc(var(--header-h) + env(safe-area-inset-top, 0px)); }
   .hero-scroll { display: none; }
   .hero-stage { width: 100%; height: auto; }
-  .hero-content { padding: 46px 20px 60px; }
-  .hero-content .eyebrow { margin-bottom: 22px; }
+  .hero-content { padding: 30px 20px 52px; }
+  .hero-content .eyebrow { margin-bottom: 14px; }
   .hero-statement { font-size: clamp(26px, 7.4vw, 38px); }
-  .hero-intro { margin-top: 22px; font-size: 15.5px; }
-  .hero-actions { margin-top: 28px; }
+  /* На телефоне кнопки идут сразу за заголовком, чтобы попадать в первый экран; текст — под ними. */
+  .hero-actions { order: 3; margin-top: 22px; }
+  .hero-intro { order: 4; margin-top: 28px; font-size: 15.5px; }
+  .is-ready .hero-content > .hero-actions { transition-delay: 150ms; }
+  .is-ready .hero-content > .hero-intro { transition-delay: 210ms; }
   .btn { min-height: 56px; width: 100%; }
 
   .works-section { padding-top: 76px; }
