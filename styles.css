@@ -672,3 +672,18 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .route-curtain, .vf, .shutter { display: none; }
   .map-arc { stroke-dashoffset: 0; }
 }
+
+/* ——— Карта: контуры суши и переключатель масштаба ——— */
+.map-scale { grid-column: 1 / -1; display: flex; align-items: center; justify-content: end; gap: 6px; }
+.map-scale button { min-height: 44px; padding: 0 14px; border: 1px solid transparent; background: transparent; color: var(--muted); font-size: 12px; }
+.map-scale button[aria-pressed="true"] { border-color: var(--line); color: var(--ink); }
+#geography, .map-stage { scroll-margin-top: calc(var(--header-h) + 10px); }
+.map-stage .map-coast { overflow: hidden; pointer-events: none; }
+.map-coast use { fill: var(--ink); fill-opacity: .055; stroke: var(--ink); stroke-opacity: .40; stroke-width: .9px; stroke-linejoin: round; }
+.map-label b, .map-label small { text-shadow: 0 1px 3px var(--bg), 0 0 5px var(--bg); }
+.map-stage.is-world { aspect-ratio: 2 / 1; }
+@media (max-width: 800px) {
+  .map-stage { aspect-ratio: 1.14; }
+  .map-scale { margin-bottom: 8px; }
+  .map-stage.is-world { aspect-ratio: 1.55; }
+}

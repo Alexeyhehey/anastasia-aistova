@@ -16,20 +16,21 @@
   const PLACES = window.AISTOVA_SERIES.filter(s => s.published !== false).map((place) => ({
     ...place, ...(LAYOUT[place.id] || { label: '', card: '' })
   }));
-  const BOUNDS = {
+  const region = {
     west: Math.min(-78, ...PLACES.map(p => p.lon - 16)),
     east: Math.max(66, ...PLACES.map(p => p.lon + 24)),
     north: Math.max(72, ...PLACES.map(p => p.lat + 10)),
     south: Math.min(4, ...PLACES.map(p => p.lat - 10))
   };
-  // географические подписи для ощущения карты (без контуров суши)
+  let bounds = region;
+  // Географические подписи.
   const WATERS = [
     { text: 'Атлантический океан', lat: 34, lon: -38 },
     { text: 'Европа', lat: 43, lon: 20 },
     { text: 'Норвежское море', lat: 67, lon: 2 }
   ];
-  const px = (lon) => (lon - BOUNDS.west) / (BOUNDS.east - BOUNDS.west);
-  const py = (lat) => (BOUNDS.north - lat) / (BOUNDS.north - BOUNDS.south);
+  const px = (lon) => (lon - bounds.west) / (bounds.east - bounds.west);
+  const py = (lat) => (bounds.north - lat) / (bounds.north - bounds.south);
 
   function degMin(value) {
     const abs = Math.abs(value);
@@ -54,23 +55,30 @@
     if (!stage || !window.DIMS) return;
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('aria-hidden', 'true');
-    stage.append(svg);
+    const coast = svg.cloneNode();
+    coast.classList.add('map-coast');
+    coast.setAttribute('preserveAspectRatio', 'none');
+    const land = document.createElementNS(svg.namespaceURI, 'use');
+    land.setAttribute('href', 'coastlines.svg#land');
+    coast.append(land);
+    stage.append(coast, svg);
 
-    // подписи сетки
-    [20, 40, 60].forEach((lat) => stage.insertAdjacentHTML('beforeend', `<span class="map-tick map-tick--lat" style="top:${py(lat) * 100}%">${lat}° с. ш.</span>`));
-    [-60, -30, 0, 30, 60].forEach((lon) => stage.insertAdjacentHTML('beforeend', `<span class="map-tick map-tick--lon" style="left:${px(lon) * 100}%">${lon === 0 ? '0°' : `${Math.abs(lon)}° ${lon < 0 ? 'з. д.' : 'в. д.'}`}</span>`));
+    const latitudeTicks = [-60, -40, -20, 0, 20, 40, 60];
+    const longitudeTicks = [-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150];
+    latitudeTicks.forEach(lat => stage.insertAdjacentHTML('beforeend', `<span class="map-tick map-tick--lat" data-lat="${lat}">${Math.abs(lat)}°${lat < 0 ? ' ю. ш.' : lat > 0 ? ' с. ш.' : ''}</span>`));
+    longitudeTicks.forEach(lon => stage.insertAdjacentHTML('beforeend', `<span class="map-tick map-tick--lon" data-lon="${lon}">${Math.abs(lon)}°${lon < 0 ? ' з. д.' : lon > 0 ? ' в. д.' : ''}</span>`));
     stage.insertAdjacentHTML('beforeend', '<span class="map-compass" aria-hidden="true">N</span>');
-    WATERS.forEach((item) => stage.insertAdjacentHTML('beforeend', `<span class="map-water" aria-hidden="true" style="left:${px(item.lon) * 100}%;top:${py(item.lat) * 100}%">${item.text}</span>`));
+    WATERS.forEach((item) => stage.insertAdjacentHTML('beforeend', `<span class="map-water" aria-hidden="true" data-lat="${item.lat}" data-lon="${item.lon}">${item.text}</span>`));
 
     // Петербург — откуда тянутся линии
-    stage.insertAdjacentHTML('beforeend', `<span class="map-home" style="left:${px(HOME.lon) * 100}%;top:${py(HOME.lat) * 100}%"><i></i><em>${HOME.title}</em></span>`);
+    stage.insertAdjacentHTML('beforeend', `<span class="map-home" data-lat="${HOME.lat}" data-lon="${HOME.lon}"><i></i><em>${HOME.title}</em></span>`);
 
     // точки серий
     PLACES.forEach((place) => {
       const count = (place.sizes || window.DIMS[place.id]).length;
       const km = niceKm(distanceKm(HOME, place));
       stage.insertAdjacentHTML('beforeend', `
-        <a class="map-point ${px(place.lon) > .62 && !LAYOUT[place.id] ? 'is-up is-card-left' : ''} ${place.label} ${place.card}" href="#/${place.id}" style="left:${px(place.lon) * 100}%;top:${py(place.lat) * 100}%">
+        <a class="map-point ${px(place.lon) > .62 && !LAYOUT[place.id] ? 'is-up is-card-left' : ''} ${place.label} ${place.card}" href="#/${place.id}" data-lat="${place.lat}" data-lon="${place.lon}">
           <i class="map-dot"></i>
           <span class="map-label"><b>${window.escapePortfolioText(place.title)}</b><small>${coords(place)}</small></span>
           <span class="map-card"><img src="img/${place.id}/${String(place.cover || 1).padStart(2, '0')}.jpg" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
@@ -142,15 +150,43 @@
       }
     }
 
+    const features = [...stage.querySelectorAll('[data-lat], [data-lon]')];
+    const scales = [...document.querySelectorAll('.map-scale button')];
+    let world = false;
+    for (const button of scales) {
+      button.addEventListener('click', () => {
+        world = button.dataset.scale === 'world';
+        stage.classList.toggle('is-world', world);
+        for (const option of scales) option.setAttribute('aria-pressed', String(option === button));
+        draw();
+      });
+    }
+
     function draw() {
-      arrangeLabels();
       const w = stage.clientWidth;
       const h = stage.clientHeight;
       if (!w || !h) return;
+      const limits = world ? { west: -200, east: 200, north: 100, south: -100 } : region;
+      // Equirectangular coordinates. The regional view uses a standard parallel of 38 degrees.
+      const spanX = limits.east - limits.west, spanY = limits.north - limits.south;
+      const ratio = w / h / (world ? 1 : Math.cos(38 * Math.PI / 180));
+      const extraX = Math.max(0, spanY * ratio - spanX) / 2;
+      const extraY = Math.max(0, spanX / ratio - spanY) / 2;
+      bounds = { west: limits.west - extraX, east: limits.east + extraX, north: limits.north + extraY, south: limits.south - extraY };
+      coast.setAttribute('viewBox', [bounds.west + 180, 90 - bounds.north, bounds.east - bounds.west, bounds.north - bounds.south].join(' '));
+      for (const feature of features) {
+        const { lat, lon } = feature.dataset;
+        const x = lon === undefined ? .5 : px(Number(lon));
+        const y = lat === undefined ? .5 : py(Number(lat));
+        if (lon !== undefined) feature.style.left = x * 100 + '%';
+        if (lat !== undefined) feature.style.top = y * 100 + '%';
+        feature.hidden = feature.matches('.map-tick') && (x < .04 || x > .96 || y < .04 || y > .96);
+      }
+      arrangeLabels();
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
       let grid = '';
-      for (let lon = -75; lon <= 60; lon += 15) grid += `<line x1="${px(lon) * w}" y1="0" x2="${px(lon) * w}" y2="${h}"/>`;
-      for (let lat = 10; lat <= 70; lat += 10) grid += `<line x1="0" y1="${py(lat) * h}" x2="${w}" y2="${py(lat) * h}"/>`;
+      for (let lon = Math.ceil(bounds.west / 15) * 15; lon < bounds.east; lon += 15) grid += `<line x1="${px(lon) * w}" y1="0" x2="${px(lon) * w}" y2="${h}"/>`;
+      for (let lat = Math.max(-80, Math.ceil(bounds.south / 10) * 10); lat < Math.min(90, bounds.north); lat += 10) grid += `<line x1="0" y1="${py(lat) * h}" x2="${w}" y2="${py(lat) * h}"/>`;
       const x1 = px(HOME.lon) * w;
       const y1 = py(HOME.lat) * h;
       const arcs = PLACES.map((place, index) => {
