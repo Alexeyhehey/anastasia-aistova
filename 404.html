@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#000000">
+  <title>Страница не найдена · Анастасия Аистова</title>
+  <link rel="icon" id="icon" href="/favicon.ico" sizes="32x32">
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body { display: grid; place-items: center; background: #000000; color: #f4f2ec; font-family: Manrope, "Segoe UI", Arial, sans-serif; text-align: center; }
+    main { padding: 32px 20px; }
+    .mark { font-family: "Archivo", "Arial Black", sans-serif; font-weight: 900; font-size: clamp(64px, 16vw, 148px); letter-spacing: -.04em; line-height: 1; }
+    h1 { margin: 28px 0 0; font-size: clamp(20px, 3.4vw, 30px); font-weight: 600; }
+    p { margin: 12px 0 0; color: #a9a69e; font-size: 15px; line-height: 1.6; }
+    a { display: inline-flex; align-items: center; min-height: 44px; margin-top: 30px; padding: 0 4px; border-bottom: 1px solid currentColor; color: inherit; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; }
+    a:focus-visible { outline: 2px solid #f4f2ec; outline-offset: 6px; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="mark" aria-hidden="true">AA</div>
+    <h1>Такой страницы нет</h1>
+    <p>Возможно, ссылка устарела или в адресе опечатка.</p>
+    <a id="home" href="/">На главную</a>
+  </main>
+  <script>
+    // На github.io сайт живёт в подпапке; на своём домене — в корне.
+    const home = location.hostname.endsWith('github.io') ? '/' + location.pathname.split('/')[1] + '/' : '/';
+    document.getElementById('home').href = home;
+    document.getElementById('icon').href = home + 'favicon.ico';
+  </script>
+</body>
+</html>
