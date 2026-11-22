@@ -118,6 +118,7 @@ window.AISTOVA_SERIES = [
         959,
         944
       ]
-    ]
+    ],
+    "published": false
   }
 ];
