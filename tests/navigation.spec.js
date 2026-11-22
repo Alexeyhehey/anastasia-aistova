@@ -46,3 +46,26 @@ test('Back restores the cover after a manual scroll from the homepage', async ({
   await page.goForward();
   await expect(page.locator('.series-hero h1')).toHaveText('Martinique');
 });
+
+for (const folder of ['']) {
+  test(`${folder || 'site'}: Back closes the photo viewer and keeps the page`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`./${folder}#/edinburgh`);
+    const frame = page.locator('#series [data-k]').nth(1);
+    await frame.click();
+    await expect(page.locator('#lb')).toBeVisible();
+    const close = await page.locator('.lightbox-close').boundingBox();
+    expect(Math.min(close.width, close.height)).toBeGreaterThanOrEqual(44);
+    await page.goBack();
+    await expect(page.locator('#lb')).toBeHidden();
+    await expect(page.locator('.series-hero h1')).toHaveText('Edinburgh');
+    await expect(frame).toBeFocused();
+    await page.goForward();
+    await expect(page.locator('#lb')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#lb')).toBeHidden();
+    await expect.poll(() => page.evaluate(() => history.state?.lightbox ?? null)).toBeNull();
+    await expect(page.locator('.series-hero h1')).toHaveText('Edinburgh');
+  });
+}

@@ -45,6 +45,7 @@
   let currentFrame = 0;
   let focusBeforeLightbox = null;
   let pendingReturn = null;      // серия, к чьей обложке летим обратно
+  let lightboxBacks = 0;         // свои history.back() после закрытия просмотра кнопкой
 
   $('#year').textContent = new Date().getFullYear();
 
@@ -264,7 +265,7 @@
     const id = location.hash.startsWith('#/') ? location.hash.slice(2) : null;
     const series = SERIES.find((item) => item.id === id);
     const previousId = activeSeriesId;
-    if (lightboxOpen()) closeLightbox(false);
+    if (lightboxOpen()) closeLightbox(false, true);
 
     if (series) {
       activeSeriesId = series.id;
@@ -429,14 +430,32 @@
     document.body.classList.add('is-locked');
     showFrame(index);
     $('.lightbox-close', lb).focus({ preventScroll: true });
+    // Просмотр — отдельная запись истории: «Назад» закрывает кадр, а не уводит со страницы.
+    if (!history.state?.lightbox) history.pushState({ ...history.state, lightbox: series.id }, '');
   }
 
-  function closeLightbox(restoreFocus = true) {
+  function closeLightbox(restoreFocus = true, fromHistory = false) {
     if (!lightboxOpen()) return;
     lb.hidden = true;
     lightboxBackground.forEach(element => { element.inert = false; });
     document.body.classList.remove('is-locked');
     if (restoreFocus && focusBeforeLightbox?.isConnected) focusBeforeLightbox.focus({ preventScroll: true, focusVisible: false });
+    if (!fromHistory && history.state?.lightbox) { lightboxBacks += 1; history.back(); }
+  }
+
+  function syncLightboxWithHistory() {
+    const entry = history.state?.lightbox;
+    if (lightboxBacks) {
+      // Запись просмотра снята после закрытия кнопкой. Если кадр уже открыли снова — возвращаем её.
+      lightboxBacks -= 1;
+      if (lightboxOpen() && !entry) history.pushState({ ...history.state, lightbox: lightboxSeries.id }, '');
+      return;
+    }
+    if (lightboxOpen()) {
+      if (!entry) closeLightbox(true, true);
+    } else if (entry && entry === lightboxSeries?.id && entry === (activeSeriesId || 'selected')) {
+      openLightbox(lightboxSeries, currentFrame, focusBeforeLightbox);   // «Вперёд» возвращает тот же кадр
+    }
   }
 
   function initLightbox() {
@@ -497,6 +516,13 @@
       touchStart = null;
     });
     $('.lightbox-figure', lb).addEventListener('pointercancel', () => { touchStart = null; });
+
+    // После перезагрузки просмотр закрыт: убираем его отметку из текущей записи истории.
+    if (history.state?.lightbox) {
+      const { lightbox, ...rest } = history.state;
+      history.replaceState(rest, '');
+    }
+    window.addEventListener('popstate', syncLightboxWithHistory);
   }
 
   /* ---------------- Заставка ---------------- */

@@ -614,8 +614,8 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 
   .lightbox { display: block; padding: 76px 16px 90px; }
   .lightbox-top { padding-inline: 16px; grid-template-columns: 1fr auto auto; }
-  .lightbox-close { font-size: 0; }
-  .lightbox-close span { font-size: 28px; }
+  .lightbox-close { display: inline-grid; place-items: center; min-width: 44px; margin-right: -12px; font-size: 0; }
+  .lightbox-close span { margin-left: 0; font-size: 28px; }
   .lightbox-figure { height: 100%; touch-action: pan-y; }
   .lightbox-figure img { max-height: calc(100dvh - 190px); }
   .lightbox-nav { position: absolute; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); width: 48px; height: 48px; }
