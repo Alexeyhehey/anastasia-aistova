@@ -102,7 +102,8 @@ window.AISTOVA_SERIES = [
         2000,
         1500
       ]
-    ]
+    ],
+    "published": false
   },
   {
     "id": "12312312312312-246a690a",
