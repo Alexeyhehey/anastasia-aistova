@@ -87,7 +87,8 @@ window.AISTOVA_SERIES = [
         2000,
         1500
       ]
-    ]
+    ],
+    "published": false
   },
   {
     "id": "testtesttest-dccebf85",
