@@ -490,6 +490,16 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 @keyframes shutter-fire { 0% { opacity: 0; } 10% { opacity: .8; } 100% { opacity: 0; } }
 
 /* ——— Планшет ——— */
+/* ПК и планшет в альбомной ориентации: три вертикальных кадра в ряд, горизонтальный — две трети ряда.
+   Каждый кадр целиком помещается в экран; порядок кадров прежний (ряды собирает deskClasses в app.js). */
+@media (min-width: 1101px), (min-width: 801px) and (orientation: landscape) {
+  .selected-grid .selected-item:nth-child(n), .frames .frame:nth-child(n) { grid-column: var(--at, auto) / span 4; margin-top: 0; }
+  .selected-grid .selected-item--wide:nth-child(n), .frames .frame--wide:nth-child(n) { grid-column: var(--at, auto) / span 8; }
+  .selected-grid .at-3, .frames .at-3 { --at: 3; }
+  .selected-grid .at-5, .frames .at-5 { --at: 5; }
+  .selected-grid .selected-item.is-low:nth-child(n), .frames .frame.is-low:nth-child(n) { margin-top: clamp(28px, 4vw, 72px); }
+}
+
 @media (max-width: 1100px) {
   .hero { grid-template-columns: minmax(0, 52%) minmax(0, 48%); }
   .hero-content { padding-left: 32px; }

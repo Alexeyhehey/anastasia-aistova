@@ -153,10 +153,34 @@
     });
   }
 
+  function deskClasses(frames) {
+    // ПК: в ряду 12 колонок, вертикальный кадр занимает 4, горизонтальный 8 — кадр целиком помещается в экран.
+    // Порядок кадров не меняется: неполный ряд встаёт по центру, второй кадр тройки или пары чуть опущен.
+    const classes = frames.map(() => '');
+    let row = [];
+    let used = 0;
+    const close = () => {
+      if (used === 8) classes[row[0]] = 'at-3';
+      if (used === 4) classes[row[0]] = 'at-5';
+      if (row.length === 3 || (row.length === 2 && used === 8)) classes[row[1]] = 'is-low';
+      row = [];
+      used = 0;
+    };
+    frames.forEach((frame, index) => {
+      const span = frame.w > frame.h ? 8 : 4;
+      if (used + span > 12) close();
+      row.push(index);
+      used += span;
+    });
+    close();
+    return classes;
+  }
+
   function renderSelected() {
     const layouts = spreadClasses(SELECTED.frames);
+    const desk = deskClasses(SELECTED.frames);
     $('#selectedGrid').innerHTML = SELECTED.frames.map((frame) => `
-      <button type="button" class="selected-item ${layouts[frame.index]} ${frame.w > frame.h ? 'selected-item--wide' : ''}" data-s="${frame.index}" data-reveal aria-label="Открыть кадр ${frame.index + 1} из ${SELECTED.frames.length}">
+      <button type="button" class="selected-item ${layouts[frame.index]} ${desk[frame.index]} ${frame.w > frame.h ? 'selected-item--wide' : ''}" data-s="${frame.index}" data-reveal aria-label="Открыть кадр ${frame.index + 1} из ${SELECTED.frames.length}">
         <img src="${frame.src}" width="${frame.w}" height="${frame.h}" alt="Подборка работ, кадр ${frame.index + 1}" loading="lazy">
       </button>
     `).join('');
@@ -224,6 +248,7 @@
 
   function renderSeries(series) {
     const layouts = ['is-solo frame--opener', ...spreadClasses(series.frames.slice(1))];
+    const desk = deskClasses(series.frames);
     const next = SERIES[(SERIES.indexOf(series) + 1) % SERIES.length];
     seriesPage.innerHTML = `
       <section class="series-hero">
@@ -234,7 +259,7 @@
         <span class="series-route-count">${series.frames.length} ${plural(series.frames.length)}</span>
       </section>
       <div class="frames">${series.frames.map((frame, index) => `
-        <button type="button" class="frame ${layouts[index]} ${frame.w > frame.h ? 'frame--wide' : ''}" data-k="${index}" data-reveal aria-label="Открыть кадр ${index + 1} из ${series.frames.length}">
+        <button type="button" class="frame ${layouts[index]} ${desk[index]} ${frame.w > frame.h ? 'frame--wide' : ''}" data-k="${index}" data-reveal aria-label="Открыть кадр ${index + 1} из ${series.frames.length}">
           <img src="${frame.src}" width="${frame.w}" height="${frame.h}" alt="Серия «${escape(series.titleRu)}», кадр ${index + 1}" loading="lazy">
         </button>`).join('')}
       </div>
