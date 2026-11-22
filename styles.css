@@ -385,10 +385,12 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   background: var(--inv-bg); color: var(--inv-ink);
   transition: background-color 500ms var(--ease-out), color 500ms var(--ease-out);
 }
-.contact-inner { width: 100%; }
+.contact-inner { width: 100%; container-type: inline-size; }
 .contact-giant {
   padding-inline: var(--gutter);
-  font-size: clamp(56px, 13.2vw, 248px);
+  /* Слово занимает ширину между полями: 7.14 — ширина «CONTACTS» в размерах шрифта. */
+  font-size: clamp(36px, 12.4vw, 248px);
+  font-size: clamp(36px, calc((100cqw - 2 * var(--gutter)) / 7.14), 248px);
   line-height: .92;
   white-space: nowrap;
 }
@@ -592,7 +594,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .common-details { grid-template-columns: 1fr; gap: 24px; }
 
   .contact-section { min-height: auto; padding: 48px 0 40px; scroll-margin-top: var(--header-h); }
-  .contact-giant { font-size: clamp(40px, 12.8vw, 92px); white-space: normal; }
+  .contact-giant { white-space: normal; }
   .contact-invite { font-size: 19px; }
   .contact-row { font-size: clamp(26px, 7.6vw, 40px); padding-block: 26px; }
   .contact-geo { font-size: 11.5px; }
@@ -637,7 +639,6 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 
 @media (max-width: 390px) {
   .hero-statement { font-size: 25px; }
-  .contact-giant { font-size: 11.4vw; }
 }
 
 @media (hover: none) {
