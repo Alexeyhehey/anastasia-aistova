@@ -277,7 +277,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 .map-point.is-card-far .map-card { top: calc(50% - 20px); }
 .map-key { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 20px; min-width: 0; }
 .map-key a { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 4px; }
-.map-label, .map-home em, .map-point, .map-home { transition-property: none; }
+.map-label, .map-label b, .map-label small, .map-home em, .map-point, .map-home { transition-property: none; }
 .map-label.is-unplaced, .map-home em.is-unplaced, .map-water.is-obscured { visibility: hidden; }
 .map-note { grid-column: 1 / -1; color: var(--muted); font-size: 13px; }
 .map-water { position: absolute; transform: translate(-50%, -50%); color: var(--ink); opacity: .2; font-family: var(--font-accent); font-style: italic; font-size: clamp(13px, 1.5vw, 22px); letter-spacing: .28em; text-transform: uppercase; white-space: nowrap; pointer-events: none; }
@@ -524,7 +524,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 
 @media (max-width: 800px) {
   :root { --header-h: calc(62px + var(--dev-height)); }
-  .page-grid { grid-template-columns: 1fr; gap: 0; }
+  .page-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .site-header { padding-inline: 20px; }
   .brand-name { display: none; }
   .nav { gap: 12px; font-size: 10px; letter-spacing: .04em; }
@@ -561,7 +561,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .map-stage { aspect-ratio: 4 / 5; overflow: hidden; }
   .map-label b { font-size: 20px; }
   .map-point.is-down .map-label { left: 50%; transform: translateX(-50%); }
-  .map-label small, .map-home em, .map-tick--lon { display: none; }
+  .map-label small, .map-home em, .map-tick { display: none; }
   .map-note { margin-top: 14px; }
   .map-water { font-size: 11px; letter-spacing: .16em; max-width: 40vw; white-space: normal; text-align: center; line-height: 1.5; }
   .map-point[href="#/ladoga"] .map-label { left: auto; right: calc(50% - 10px); top: auto; bottom: calc(50% + 12px); transform: none; text-align: right; }
@@ -700,3 +700,15 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
   .dev-banner { padding-inline: 12px; }
   .map-stage.is-world { aspect-ratio: 1.55; }
 }
+
+/* ——— Длинные названия и тексты из студии ——— */
+body { overflow-wrap: break-word; }
+.is-tight { overflow-wrap: anywhere; }
+.brand { flex: none; }
+.header-right, .nav { min-width: 0; }
+.nav.is-tight { overflow-x: auto; scrollbar-width: none; }
+.nav.is-tight::-webkit-scrollbar { display: none; }
+.next-series span { display: block; }
+.map-label b { width: max-content; max-width: min(14em, 62vw); white-space: normal; }
+.map-stage.is-dense .map-label b { font-size: clamp(14px, 1.35vw, 22px); }
+.map-stage.is-dense .map-label small { display: none; }

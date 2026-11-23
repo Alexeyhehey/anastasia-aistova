@@ -78,7 +78,7 @@
       const count = (place.sizes || window.DIMS[place.id]).length;
       const km = niceKm(distanceKm(HOME, place));
       stage.insertAdjacentHTML('beforeend', `
-        <a class="map-point ${px(place.lon) > .62 && !LAYOUT[place.id] ? 'is-up is-card-left' : ''} ${place.label} ${place.card}" href="#/${place.id}" data-lat="${place.lat}" data-lon="${place.lon}">
+        <a class="map-point ${px(place.lon) > .62 && !LAYOUT[place.id] ? 'is-up' : ''} ${place.label} ${place.card}"${LAYOUT[place.id] ? '' : ' data-auto'} href="#/${place.id}" data-lat="${place.lat}" data-lon="${place.lon}">
           <i class="map-dot"></i>
           <span class="map-label"><b>${window.escapePortfolioText(place.title)}</b><small>${coords(place)}</small></span>
           <span class="map-card"><img src="${window.seriesPhoto(place, place.cover || 1)}" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
@@ -106,9 +106,15 @@
         a.top < b.bottom + gap && a.bottom > b.top - gap;
     }
 
+    // Если подписи не помещаются крупно, карта уплотняется: шрифт меньше, координаты скрыты.
     function arrangeLabels() {
+      stage.classList.remove('is-dense');
+      if (placeLabels()) { stage.classList.add('is-dense'); placeLabels(); }
+    }
+
+    function placeLabels() {
       const bounds = stage.getBoundingClientRect();
-      if (!bounds.width || !bounds.height) return;
+      if (!bounds.width || !bounds.height) return false;
       for (const { label } of markers) label.style.translate = '';
       const boxes = markers.map(({ dot, label }) => ({
         dot: dot.getBoundingClientRect(), label: label.getBoundingClientRect()
@@ -148,6 +154,7 @@
         const box = water.getBoundingClientRect();
         water.classList.toggle('is-obscured', occupied.some(other => overlaps(box, other)));
       }
+      return needsKey;
     }
 
     const features = [...stage.querySelectorAll('[data-lat], [data-lon]')];
@@ -181,6 +188,8 @@
         if (lon !== undefined) feature.style.left = x * 100 + '%';
         if (lat !== undefined) feature.style.top = y * 100 + '%';
         feature.hidden = feature.matches('.map-tick') && (x < .04 || x > .96 || y < .04 || y > .96);
+        // Карточка новой точки открывается внутрь карты, а не за её край.
+        if ('auto' in feature.dataset) { feature.classList.toggle('is-card-left', x > .6); feature.classList.toggle('is-card-up', y > .55); }
       }
       arrangeLabels();
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);

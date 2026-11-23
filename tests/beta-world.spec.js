@@ -23,5 +23,6 @@ test('the beta opens with all land inside the frame and links to its marked stud
   await expect(page.locator('#mapStage')).not.toHaveClass(/is-world/);
   await page.locator('.dev-banner a').click();
   await expect(page.locator('header')).toContainText('[IN DEVELOPMENT]');
-  await expect(page.getByRole('link', { name: 'Открыть бету' })).toHaveAttribute('href', /\/beta\/$/);
+  await expect(page.locator('#siteLink')).toHaveAttribute('href', './');
+  expect(new URL(page.url()).pathname).toBe('/beta/add-series.html');
 });
