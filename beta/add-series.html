@@ -1,28 +1,78 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
-<title>Бета-студия портфолио · Анастасия Аистова</title>
-<link rel="stylesheet" href="studio.css?v=3"><script defer src="img/dims.js"></script>
-<script type="module" src="prepare-series.js?v=3"></script></head>
-<body><header><strong class="studio-banner">[IN DEVELOPMENT]</strong><span class="brand">AA</span><span>Бета-студия портфолио</span><a href="https://alexeyhehey.github.io/anastasia-aistova/beta/" target="_blank" rel="noopener">Открыть бету ↗</a></header>
-<main><h1>Съёмки бета-сайта</h1>
-<section id="login">
-<p>В Windows откройте студию и войдите через GitHub. При следующих запусках вход сохранится.</p>
-<a class="primary" href="https://alexeyhehey.github.io/anastasia-aistova/beta/studio-windows.zip" download>Скачать бета-студию для Windows</a>
-<p class="note">Распакуйте ZIP и откройте «Бета-студия.exe». Для публикации нужен аккаунт с доступом на запись к сайту.</p>
-<details><summary>Открыть редактор в этом браузере</summary>
-<form id="auth"><p>Владелец репозитория может войти с ключом GitHub. При создании выберите <b>Only select repositories → anastasia-aistova</b> и доступ <b>Contents → Read and write</b>. Ключ действует в этой вкладке до её закрытия.</p>
-<p><a href="https://github.com/settings/personal-access-tokens/new?name=Aistova%20Beta%20Studio&amp;contents=write" target="_blank" rel="noopener noreferrer">Создать ключ в GitHub ↗</a></p>
-<label>Ключ доступа<input id="token" type="password" autocomplete="off" required></label><button>Открыть редактор</button></form></details></section>
-<section id="workspace" hidden><div class="toolbar"><button id="create">Добавить съёмку</button><button class="secondary" id="reload">Обновить список</button></div>
-<div id="shoots"></div></section>
-<form id="editor" hidden><fieldset id="fields"><div class="toolbar"><h2 id="editorTitle">Новая съёмка</h2><button class="secondary" type="button" id="cancel">Закрыть</button></div>
-<div class="pair"><label>Название серии<input id="title" required maxlength="60" placeholder="Lisbon"></label><label>Название по-русски <small>по желанию</small><input id="russian" maxlength="60" placeholder="Лиссабон"></label></div>
-<h3>Точка на карте</h3><p>Нажмите на место, в честь которого названа съёмка, или введите координаты.</p>
-<button type="button" id="mapPicker" aria-label="Карта мира для выбора координат" tabindex="-1"><img src="studio-map.svg" alt=""><i id="pin" hidden></i></button>
-<div class="pair"><label>Широта<input required type="number" step="any" min="-90" max="90" id="lat" placeholder="38.72"></label><label>Долгота<input required type="number" step="any" min="-180" max="180" id="lon" placeholder="-9.14"></label></div>
-<h3>Фотографии</h3><label id="pickerLabel">Выбрать фотографии съёмки<input type="file" id="photos" multiple accept="image/jpeg,image/png,image/webp"></label>
-<p>Кадры идут по именам файлов. Выбранная обложка откроет серию. Отметьте галочками фотографии, которые хотите показать ещё и в подборке на главной.</p>
-<div id="list"></div><button id="save">Опубликовать съёмку</button></fieldset></form>
+<title>Студия портфолио · Анастасия Аистова</title>
+<link rel="stylesheet" href="studio.css?v=4">
+<script type="module" src="studio.js?v=4"></script></head>
+<body>
+<header class="top"><span class="brand">AA</span><b>Студия</b><span class="beta" id="betaTag" hidden>бета · [IN DEVELOPMENT]</span>
+<a id="siteLink" href="./" target="_blank" rel="noopener">Открыть сайт ↗</a><button class="link" type="button" id="logout" hidden>Выйти</button></header>
+
+<main>
+<section id="login" class="card">
+<h1>Вход в студию</h1>
+<p>Здесь вы сами управляете сайтом: съёмки и точки на карте, тексты, контакты и свои фотографии. Работает с телефона, планшета и компьютера.</p>
+<form id="auth">
+<label>Ключ доступа<input id="token" type="password" autocomplete="off" required placeholder="github_pat_…"></label>
+<label class="check"><input type="checkbox" id="remember" checked> Запомнить на этом устройстве</label>
+<button class="primary">Войти</button>
+</form>
+<details><summary>Где взять ключ</summary>
+<p>Ключ один раз создаёт владелец сайта на GitHub: <b>Settings → Developer settings → Fine-grained tokens → Generate new token</b>. Выбрать <b>Only select repositories → anastasia-aistova</b> и разрешение <b>Contents → Read and write</b>. Готовый ключ вставьте в поле выше — на своём устройстве вводить его снова не придётся.</p>
+<p><a href="https://github.com/settings/personal-access-tokens/new?name=Aistova%20Studio&amp;contents=write" target="_blank" rel="noopener noreferrer">Создать ключ в GitHub ↗</a></p>
+<p class="note">Не пересылайте ключ посторонним: с ним можно менять сайт. На чужом устройстве снимите галочку «Запомнить».</p>
+</details>
+</section>
+
+<nav id="tabs" hidden aria-label="Разделы студии">
+<button type="button" data-tab="shoots" aria-pressed="true">Съёмки</button>
+<button type="button" data-tab="texts" aria-pressed="false">Тексты</button>
+<button type="button" data-tab="me" aria-pressed="false">Мои фото</button>
+</nav>
+
+<section id="shoots" hidden>
+<div class="toolbar"><h1>Съёмки</h1><button class="primary" type="button" id="create">+ Добавить съёмку</button></div>
+<p class="note">Каждая съёмка — это серия фотографий и точка на карте. Порядок здесь = порядок на сайте.</p>
+<div id="entries"></div>
+<button class="primary" type="button" id="saveOrder" hidden>Сохранить новый порядок</button>
+</section>
+
+<form id="editor" hidden novalidate>
+<div class="toolbar"><h1 id="editorTitle">Новая съёмка</h1><button class="secondary" type="button" id="cancel">← К списку</button></div>
+<div class="pair">
+<label>Название серии <small>крупная надпись на сайте</small><input id="title" required maxlength="40" placeholder="Lisbon"></label>
+<label>Название по-русски <small>по желанию</small><input id="russian" maxlength="40" placeholder="Лиссабон"></label>
+</div>
+<h2>Точка на карте</h2>
+<p class="note">Найдите место по названию или нажмите на карту. Точку можно поправить в любой момент.</p>
+<div class="search"><input id="place" type="search" placeholder="Например: Лиссабон" enterkeyhint="search" aria-label="Название места"><button class="secondary" type="button" id="find">Найти</button></div>
+<div id="places"></div>
+<button type="button" id="mapPicker" aria-label="Карта мира: нажмите, чтобы поставить точку"><img src="studio-map.svg" alt=""><span id="dots"></span><i id="pin" hidden></i></button>
+<div class="pair">
+<label>Широта<input required type="number" inputmode="decimal" step="any" min="-90" max="90" id="lat" placeholder="38.72"></label>
+<label>Долгота<input required type="number" inputmode="decimal" step="any" min="-180" max="180" id="lon" placeholder="-9.14"></label>
+</div>
+<h2>Фотографии</h2>
+<p class="note">Стрелками меняйте порядок. «Обложка» открывает серию, «В подборку» показывает кадр ещё и на главной. Большие файлы студия уменьшит сама.</p>
+<label class="picker" id="pickerLabel">+ Добавить фотографии<input type="file" id="photos" multiple accept="image/jpeg,image/png,image/webp"></label>
+<div id="list"></div>
+<div class="savebar"><button class="primary" id="save">Опубликовать съёмку</button></div>
+<button class="danger" type="button" id="remove" hidden>Удалить съёмку навсегда</button>
+</form>
+
+<section id="texts" hidden>
+<div class="toolbar"><h1>Тексты и контакты</h1></div>
+<p class="note">Откройте нужный раздел, поправьте текст и нажмите «Сохранить тексты». Заголовки на сайте сами уменьшатся, если не поместятся.</p>
+<form id="textForm" novalidate></form>
+<div class="savebar"><button class="primary" type="button" id="saveTexts">Сохранить тексты</button></div>
+</section>
+
+<section id="me" hidden>
+<div class="toolbar"><h1>Мои фото</h1></div>
+<p class="note">Фотографии первого экрана и раздела «Обо мне». Выберите новый файл, подвиньте кадр ползунком и сохраните.</p>
+<div id="slots"></div>
+<div class="savebar"><button class="primary" type="button" id="saveMe">Сохранить фотографии</button></div>
+</section>
+</main>
 <p id="status" role="status" aria-live="polite"></p>
-</main></body></html>
+</body></html>

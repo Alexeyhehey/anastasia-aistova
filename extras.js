@@ -81,7 +81,7 @@
         <a class="map-point ${px(place.lon) > .62 && !LAYOUT[place.id] ? 'is-up is-card-left' : ''} ${place.label} ${place.card}" href="#/${place.id}" data-lat="${place.lat}" data-lon="${place.lon}">
           <i class="map-dot"></i>
           <span class="map-label"><b>${window.escapePortfolioText(place.title)}</b><small>${coords(place)}</small></span>
-          <span class="map-card"><img src="img/${place.id}/${String(place.cover || 1).padStart(2, '0')}.jpg" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
+          <span class="map-card"><img src="${window.seriesPhoto(place, place.cover || 1)}" width="600" height="900" alt="" loading="lazy"><em>${count} ${plural(count)} · ≈ ${km} км от Петербурга</em></span>
         </a>`);
     });
 

@@ -16,7 +16,7 @@
 
   const SERIES = window.AISTOVA_SERIES.filter(s => s.published !== false).map((cfg) => {
     const frames = (cfg.sizes || window.DIMS[cfg.id]).map(([w, h], index) => ({
-      src: `img/${cfg.id}/${pad(index + 1)}.jpg`, w, h, index
+      src: window.seriesPhoto(cfg, index + 1), w, h, index
     }));
     const cover = frames[(cfg.cover || 1) - 1] || frames[0];
     const ordered = [cover, ...frames.filter(frame => frame !== cover)];
@@ -27,11 +27,11 @@
     id: 'selected',
     title: C.selected.label || 'SELECTED',
     frames: C.selected.order.flatMap((entry, index) => {
-      if (entry && !SERIES.some(s => s.id === entry[0] && s.selected?.includes(entry[1]))) return [];
+      if (entry && !SERIES.some(s => s.id === entry[0] && s.selected?.some(n => window.seriesFile(s, n) === entry[1]))) return [];
       const [w, h] = window.DIMS.selected[index];
       return [{ src: `img/selected/${pad(index + 1)}.jpg`, w, h }];
     }).concat(SERIES.flatMap(series => (series.selected || [])
-      .filter(n => !C.selected.order.some(entry => entry && entry[0] === series.id && entry[1] === n))
+      .filter(n => !C.selected.order.some(entry => entry && entry[0] === series.id && entry[1] === window.seriesFile(series, n)))
       .map(n => series.sourceFrames[n - 1]).filter(Boolean)
     )).map((frame, index) => ({ ...frame, index }))
   };
@@ -55,12 +55,20 @@
   const getByPath = (path) => path.split('.').reduce((obj, key) => (obj == null ? obj : obj[key]), C);
 
   function hydrateContent() {
+    // Личные фото, заменённые в студии (пустая строка — кадр из вёрстки).
+    const media = C.media || {};
+    const swap = (selector, path) => { const img = $(selector); if (img && path) img.src = window.sitePhoto(path); };
+    swap('#heroImage', media.hero);
+    if (media.cutout === 'none') $('.hero-cutout')?.remove(); else swap('.hero-cutout', media.cutout);
+    swap('.about-portrait img', media.portrait);
+    swap('.about-photo--first img', media.about1);
+    swap('.about-photo--second img', media.about2);
     $$('[data-c]').forEach((el) => {
       const value = getByPath(el.dataset.c);
       if (value != null) el.textContent = value;
     });
 
-    $('#mainNav').innerHTML = C.nav.map((item) => `<a href="${item.href}">${item.label}</a>`).join('');
+    $('#mainNav').innerHTML = C.nav.map((item) => `<a href="${escape(item.href)}">${escape(item.label)}</a>`).join('');
 
     $('#heroNameLine1').textContent = C.site.nameLatin[0];
     $('#heroNameLine2').textContent = C.site.nameLatin[1];
@@ -74,22 +82,22 @@
      ['contactInstagram', 'instagram'], ['footerInstagram', 'instagram']]
       .forEach(([id, key]) => { const link = document.getElementById(id); if (link) link.href = C.site[key]; });
 
-    $('#aboutCopy').innerHTML = C.about.paragraphs.map((text) => `<p>${text}</p>`).join('');
+    $('#aboutCopy').innerHTML = C.about.paragraphs.map((text) => `<p>${escape(text)}</p>`).join('');
 
     $('#formatList').innerHTML = C.services.formats.map((format) => `
       <article class="format" data-reveal>
-        <div class="format-title"><span>${format.kicker}</span><h3>${format.title}</h3></div>
+        <div class="format-title"><span>${escape(format.kicker)}</span><h3>${escape(format.title)}</h3></div>
         <div class="format-description">
-          <p>${format.text}</p>
+          <p>${escape(format.text)}</p>
           <p class="format-includes">Что включено</p>
-          <ul>${format.includes.map((item) => `<li>${item}</li>`).join('')}</ul>
-          <p class="price">${format.price || C.services.price}</p>
-          <a class="btn" href="#contact"><span>${C.services.cta}</span>${arrow}</a>
+          <ul>${format.includes.map((item) => `<li>${escape(item)}</li>`).join('')}</ul>
+          <p class="price">${escape(format.price || C.services.price)}</p>
+          <a class="btn" href="#contact"><span>${escape(C.services.cta)}</span>${arrow}</a>
         </div>
       </article>`).join('');
 
     $('#commonDetails').innerHTML = C.services.details
-      .map(([title, text]) => `<p><span>${title}</span>${text}</p>`).join('');
+      .map(([title, text]) => `<p><span>${escape(title)}</span>${escape(text)}</p>`).join('');
   }
 
   /* ---------------- Тема ---------------- */
