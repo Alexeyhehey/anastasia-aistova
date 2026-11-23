@@ -688,6 +688,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.35; }
 .map-stage.is-world { aspect-ratio: 2 / 1; }
 
 .site-header { padding-top: var(--dev-height); }
+.about-section { scroll-margin-top: var(--dev-height); }   /* заголовок раздела не уходит под полосу [IN DEVELOPMENT] */
 .dev-banner {
   position: absolute; inset: 0 0 auto; height: var(--dev-height); padding-inline: var(--gutter);
   display: flex; align-items: center; justify-content: space-between;

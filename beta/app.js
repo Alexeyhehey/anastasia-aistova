@@ -39,6 +39,7 @@
   const home = $('#home');
   const seriesPage = $('#series');
   const curtain = $('#routeCurtain');
+  let curtainTimer = 0;
   let activeSeriesId = null;
   let lightboxFrames = [];
   let lightboxSeries = null;
@@ -345,7 +346,8 @@
       curtain.classList.remove('is-active');
       void curtain.offsetWidth;
       curtain.classList.add('is-active');
-      setTimeout(() => curtain.classList.remove('is-active'), 520);
+      clearTimeout(curtainTimer);   // быстрый второй переход не должен гасить занавес раньше времени
+      curtainTimer = setTimeout(() => curtain.classList.remove('is-active'), 520);
     }
   }
 

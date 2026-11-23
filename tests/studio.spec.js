@@ -44,6 +44,8 @@ function publicationScenario(folder) {
     await page.route(/\/catalog\.js\?v=/, route => route.fulfill({ contentType: 'application/javascript', body: catalog }));
     await page.route(/\/img\/tokyo-[\w-]+\/\d+\.jpg/, route => route.fulfill({path:resolve('img/selected/01.jpg')}));
     await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('./' + folder); await expect(page.locator('.selected-item').first()).toBeAttached(); await expect(page.locator('.map-point').first()).toBeAttached();
+    const baseSelected = await page.locator('.selected-item').count(); const basePoints = await page.locator('.map-point').count();   // не зависим от живого каталога
     await page.goto('./' + folder + 'add-series.html');
     await page.locator('summary').click(); await page.locator('#token').fill('test-only'); await page.locator('#auth button').click();
     await expect(page.locator('.entry')).toHaveCount(initialCount);
@@ -58,7 +60,7 @@ function publicationScenario(folder) {
     expect(shoot.selected).toEqual([1]); expect(shoot.cover).toBe(2); expect(shoot.sizes).toHaveLength(2);
     const managerURL = page.url();
     await page.goto('./' + folder);
-    await expect(page.locator('.selected-item')).toHaveCount(16);
+    await expect(page.locator('.selected-item')).toHaveCount(baseSelected + 1);
     const map = page.locator('.map-point').last(); await expect(map).toHaveAttribute('href','#/' + shoot.id); await map.locator('.map-dot').click();
     await expect(page.locator('.frame')).toHaveCount(2); await expect(page.locator('.frame').first().locator('img')).toHaveAttribute('src', 'img/' + shoot.id + '/02.jpg');
     await page.goto(managerURL);
@@ -72,9 +74,9 @@ function publicationScenario(folder) {
     const hiddenCatalog = catalog;
     await row.getByText('Вернуть на сайт').click(); await expect(row).toContainText('На сайте');
     const restored = catalog;
-    catalog = hiddenCatalog; await page.goto('./' + folder + '#/' + shoot.id); await expect(page.locator('.map-point')).toHaveCount(3);
-    await expect(page.locator('.selected-item')).toHaveCount(15); await expect(page.locator('#series')).toBeHidden();
-    catalog = restored; await page.reload(); await expect(page.locator('.map-point')).toHaveCount(4); await expect(page.locator('.selected-item')).toHaveCount(17);
+    catalog = hiddenCatalog; await page.goto('./' + folder + '#/' + shoot.id); await expect(page.locator('.map-point')).toHaveCount(basePoints);
+    await expect(page.locator('.selected-item')).toHaveCount(baseSelected); await expect(page.locator('#series')).toBeHidden();
+    catalog = restored; await page.reload(); await expect(page.locator('.map-point')).toHaveCount(basePoints + 1); await expect(page.locator('.selected-item')).toHaveCount(baseSelected + 2);
   };
 }
 

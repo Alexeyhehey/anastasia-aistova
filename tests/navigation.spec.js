@@ -69,3 +69,32 @@ for (const folder of ['', 'beta/']) {
     await expect(page.locator('.series-hero h1')).toHaveText('Edinburgh');
   });
 }
+
+for (const folder of ['', 'beta/']) {
+  test((folder || 'live/') + ' two quick series changes keep the full curtain and open the last series', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 810 });
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto('./' + folder + '#/edinburgh');
+    await expect(page.locator('#series .frame').first()).toBeAttached();
+    const active = await page.evaluate(async () => {
+      const wait = ms => new Promise(r => setTimeout(r, ms));
+      location.hash = '#/ladoga'; await wait(260);
+      location.hash = '#/martinique'; await wait(400);
+      return document.querySelector('#routeCurtain').classList.contains('is-active');
+    });
+    expect(active).toBe(true);
+    await expect(page.locator('#routeCurtain')).not.toHaveClass(/is-active/);
+    await expect(page.locator('#series .frame').first().locator('img')).toHaveAttribute('src', /martinique\//);
+  });
+
+  test((folder || 'live/') + ' ABOUT ME heading lands below the fixed header after leaving a series', async ({ page }) => {
+    for (const size of [{ width: 320, height: 568 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(size);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto('./' + folder + '#/edinburgh');
+      await expect(page.locator('#series .frame').first()).toBeAttached();
+      await page.locator('.site-header a[href="#about"]').first().click();
+      await expect.poll(() => page.evaluate(() => document.querySelector('#about h2').getBoundingClientRect().top - document.querySelector('.site-header').getBoundingClientRect().bottom)).toBeGreaterThanOrEqual(8);
+    }
+  });
+}

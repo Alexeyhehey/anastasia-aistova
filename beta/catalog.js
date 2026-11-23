@@ -17,6 +17,7 @@ window.AISTOVA_SERIES = [
     "titleRu": "Мартиника",
     "lat": 14.67,
     "lon": -61,
+    "cover": 10,
     "selected": [
       2,
       6,
