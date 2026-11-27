@@ -28,14 +28,14 @@ for (const folder of ['', 'beta/']) for (const [width, height] of [[360, 740], [
       return { wide, scroll: document.documentElement.scrollWidth - view };
     });
     for (const hash of ['', '#/long-0']) {
-      await page.goto('/' + folder + hash);
+      await page.goto('./' + folder + hash);
       await expect(page.locator(hash ? '.series-hero h1' : '#mapStage .map-point').first()).toBeVisible();
       await expect.poll(spill).toEqual({ wide: [], scroll: 0 });
     }
     await expect(page.locator('.series-hero h1')).not.toHaveClass(/is-tight/);
 
     // Карта: видимые подписи не налезают друг на друга, спрятанные точки названы в списке под картой.
-    await page.goto('/' + folder);
+    await page.goto('./' + folder);
     await page.locator('#mapStage').scrollIntoViewIfNeeded();
     const map = await page.evaluate(() => {
       const labels = [...document.querySelectorAll('#mapStage .map-label')].filter(node => getComputedStyle(node).visibility !== 'hidden').map(node => node.getBoundingClientRect());

@@ -21,7 +21,7 @@ test('mobile spreads, overlapping portraits and the light theme', async ({ page 
 test('a desktop revisit plays the intro and a direct series link skips it', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.addInitScript(() => sessionStorage.setItem('aistova-intro','seen'));
-  await page.goto('./');
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#intro')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('#intro')).toBeHidden();
